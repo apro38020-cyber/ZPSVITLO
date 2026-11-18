@@ -1,28 +1,34 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="uk" class="splash-locked">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>ZP SVITLO — Моніторинг графіків відключень у Запоріжжі</title>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="ZP SVITLO" />
+  <meta name="theme-color" content="#08080a" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; connect-src 'self' https://zpsvitlo-default-rtdb.europe-west1.firebasedatabase.app https://api.allorigins.win https://api.codetabs.com https://corsproxy.io https://thingproxy.freeboard.io; img-src 'self' data:; base-uri 'none'; form-action 'none';" />
+  <link rel="apple-touch-icon" sizes="180x180" href="icon.png" />
+  <title>ZP SVITLO — м. Запоріжжя</title>
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Unbounded:wght@700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Unbounded:wght@700;800;900&display=swap" rel="stylesheet" />
+
   <style>
     :root {
       --bg-white: #ffffff;
       --bg-snow: #f4f4f6;
-      --bg-black: #09090b;
-      --bg-coal: #111114;
-      --bg-graphite: #18181d;
-      --text-dark: #09090b;
-      --text-muted-light: #52525b;
-      --text-light: #fafafa;
-      --text-muted-dark: #a1a1aa;
+      --bg-dark: #08080a;
+      --bg-card-dark: #111115;
       --border-light: #e4e4e7;
-      --border-dark: rgba(255, 255, 255, 0.14);
-      --font-display: 'Unbounded', sans-serif;
-      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-      --font-mono: 'JetBrains Mono', monospace;
+      --border-dark: #26262e;
+      --text-dark: #09090b;
+      --text-white: #ffffff;
+      --text-muted-dark: #a1a1aa;
+      --font-display: 'Unbounded', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
     }
 
     *, *::before, *::after {
@@ -32,472 +38,308 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    html, body {
-      width: 100%;
-      max-width: 100%;
-      overflow-x: hidden;
-      overflow-y: auto !important;
-      height: auto !important;
-      min-height: 100dvh;
-      touch-action: pan-y;
-      -webkit-overflow-scrolling: touch;
-      -webkit-text-size-adjust: 100%;
+    html {
       font-family: var(--font-sans);
-      background-color: var(--bg-black);
-      color: var(--text-dark);
-      -webkit-font-smoothing: antialiased;
+      background-color: var(--bg-dark);
+      color: var(--text-white);
+      -webkit-text-size-adjust: 100%;
+      touch-action: pan-y;
+    }
+
+    body {
+      min-height: 100dvh;
+      background-color: var(--bg-dark);
+      overflow-x: hidden;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      touch-action: pan-y;
     }
 
     html.splash-locked,
     body.splash-locked {
       overflow: hidden !important;
       height: 100dvh !important;
-      max-height: 100dvh !important;
+      touch-action: none;
     }
 
-    #mainApp {
-      width: 100%;
-      min-height: 100dvh;
-      overflow: visible;
-      touch-action: pan-y;
+    .hidden {
+      display: none !important;
     }
 
-    input, textarea, select {
-      font-size: 16px !important;
-    }
-
-    button, a {
-      min-height: 44px;
-      touch-action: manipulation;
-    }
-
-    .hidden { display: none !important; }
     .font-display { font-family: var(--font-display); }
     .font-mono { font-family: var(--font-mono); }
 
-    @keyframes pulseDot {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.35; transform: scale(0.78); }
-    }
-
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(12px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes popIn {
-      from { opacity: 0; transform: scale(0.94) translateY(8px); }
-      to { opacity: 1; transform: scale(1) translateY(0); }
-    }
-
-    @keyframes radarSweep {
-      0% { transform: translateX(-100%); }
-      100% { transform: translateX(220%); }
-    }
-
-    @keyframes floatCenter {
-      0%, 100% { transform: translateY(0px) scale(1); }
-      50% { transform: translateY(-6px) scale(1.03); }
-    }
-
-    @keyframes floatSide {
-      0%, 100% { transform: translateY(0px) rotate(var(--rot, 0deg)); }
-      50% { transform: translateY(-5px) rotate(calc(var(--rot, 0deg) + 2deg)); }
-    }
-
-    .animate-fade-up { animation: fadeUp 0.38s cubic-bezier(0.16, 1, 0.3, 1) both; }
-    .animate-pop { animation: popIn 0.26s cubic-bezier(0.16, 1, 0.3, 1) both; }
-
-    /* Об'ємні Apple iOS стікери */
+    /* Нативні кольорові Apple iOS стікери з білим контуром та об'ємною тінню */
     .ios-sticker {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
       line-height: 1;
       user-select: none;
-      filter:
-        drop-shadow(0 2px 0 #ffffff)
-        drop-shadow(0 -2px 0 #ffffff)
-        drop-shadow(2px 0 0 #ffffff)
-        drop-shadow(-2px 0 0 #ffffff)
-        drop-shadow(0 6px 14px rgba(0, 0, 0, 0.16));
-    }
-
-    .ios-sticker-xl {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
       font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
-      line-height: 1;
-      user-select: none;
       filter:
-        drop-shadow(0 3px 0 #ffffff)
-        drop-shadow(0 -3px 0 #ffffff)
-        drop-shadow(3px 0 0 #ffffff)
-        drop-shadow(-3px 0 0 #ffffff)
-        drop-shadow(0 14px 28px rgba(0, 0, 0, 0.22));
+        drop-shadow(0 0 1.5px #ffffff)
+        drop-shadow(0 0 1.5px #ffffff)
+        drop-shadow(0 6px 12px rgba(0, 0, 0, 0.38));
     }
 
     .ios-sticker-dark {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
       line-height: 1;
       user-select: none;
+      font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
       filter:
-        drop-shadow(0 1.5px 0 rgba(255, 255, 255, 0.92))
-        drop-shadow(0 -1.5px 0 rgba(255, 255, 255, 0.92))
-        drop-shadow(1.5px 0 0 rgba(255, 255, 255, 0.92))
-        drop-shadow(-1.5px 0 0 rgba(255, 255, 255, 0.92))
-        drop-shadow(0 6px 14px rgba(0, 0, 0, 0.65));
+        drop-shadow(0 0 1.2px rgba(255, 255, 255, 0.9))
+        drop-shadow(0 4px 10px rgba(0, 0, 0, 0.65));
     }
 
-    /* Тактичні текстури мілітарі-таблиці */
-    .hatch-on {
-      background: #ffffff;
-      color: #09090b;
-    }
-
-    .hatch-off {
-      background-color: #141418;
-      background-image: repeating-linear-gradient(
-        -45deg,
-        #141418,
-        #141418 5px,
-        #27272f 5px,
-        #27272f 10px
-      );
-      color: #e4e4e7;
-    }
-
-    .hatch-jur {
-      background-color: #18181c;
-      background-image: radial-gradient(rgba(255, 255, 255, 0.26) 1px, transparent 1px);
-      background-size: 7px 7px;
-      color: #d4d4d8;
-    }
-
-    /* =====================================================================
-       1. СТАРТОВИЙ ЕКРАН (ФІКСОВАНИЙ 100dvh БЕЗ ПРОКРУТКИ ТА З'ЇЖДЖАННЯ HUD)
-       ===================================================================== */
-    .entry-screen {
+    /* Стартовий екран (100dvh) */
+    #splashScreen {
       position: fixed;
       inset: 0;
-      width: 100%;
+      z-index: 9999;
       height: 100dvh;
-      max-height: 100dvh;
-      overflow: hidden;
-      z-index: 100;
-      background-color: #ffffff;
-      background-image: radial-gradient(#d4d4d8 1px, transparent 1px);
-      background-size: 20px 20px;
-      color: #09090b;
+      width: 100%;
+      background:
+        radial-gradient(circle at 50% 34%, rgba(255, 255, 255, 0.08) 0%, rgba(8, 8, 10, 0) 60%),
+        #08080a;
+      color: #ffffff;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      padding: calc(12px + env(safe-area-inset-top)) 16px calc(12px + env(safe-area-inset-bottom));
-      transition: opacity 0.28s ease, transform 0.28s ease;
+      align-items: center;
+      padding:
+        calc(14px + env(safe-area-inset-top))
+        18px
+        calc(16px + env(safe-area-inset-bottom));
+      overflow: hidden;
     }
 
-    .entry-screen.closing {
-      opacity: 0;
-      transform: scale(1.02);
-      pointer-events: none;
-    }
-
-    .entry-top {
+    .splash-top-bar {
+      width: 100%;
+      max-width: 480px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 8px;
-      max-width: 960px;
-      width: 100%;
-      margin: 0 auto;
-      flex-shrink: 0;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
     }
 
-    .hud-pill {
+    .splash-live-pill {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      padding: 6px 11px;
-      border-radius: 999px;
-      background: #ffffff;
-      border: 1px solid var(--border-light);
-      font-family: var(--font-mono);
-      font-size: clamp(9px, 2.5vw, 11px);
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      white-space: nowrap;
-      min-height: 30px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      gap: 7px;
     }
 
-    .live-dot {
-      width: 7px;
-      height: 7px;
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
       border-radius: 50%;
-      background: #09090b;
-      flex-shrink: 0;
-      animation: pulseDot 1.5s infinite ease-in-out;
+      background: #22c55e;
+      box-shadow: 0 0 10px #22c55e;
+      animation: pulseAnim 1.6s infinite ease-in-out;
     }
 
-    .entry-center {
-      max-width: 540px;
-      width: 100%;
-      margin: auto;
+    @keyframes pulseAnim {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.35); opacity: 0.55; }
+    }
+
+    .splash-center {
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      gap: clamp(8px, 1.8vh, 16px);
       text-align: center;
-      flex-shrink: 1;
-      min-height: 0;
+      gap: 14px;
+      width: 100%;
+      max-width: 460px;
     }
 
-    /* Кластер Apple iOS стікерів */
     .sticker-cluster {
       position: relative;
-      width: clamp(174px, 44vw, 224px);
-      height: clamp(130px, 19vh, 174px);
+      width: 210px;
+      height: 126px;
       display: flex;
       align-items: center;
       justify-content: center;
-      flex-shrink: 0;
     }
 
-    .cluster-bolt-main {
-      font-size: clamp(66px, 10.5vh, 90px);
-      z-index: 2;
-      animation: floatCenter 3.8s ease-in-out infinite;
+    .sticker-main {
+      font-size: 74px;
+      z-index: 3;
+      transform: rotate(-4deg);
+      animation: floatMain 3.4s ease-in-out infinite;
     }
 
-    .cluster-bulb-tl {
+    .sticker-bulb {
       position: absolute;
       top: 4px;
-      left: 14px;
-      font-size: clamp(24px, 4vh, 32px);
-      --rot: -14deg;
-      animation: floatSide 3.4s ease-in-out infinite;
-      z-index: 3;
+      left: 16px;
+      font-size: 36px;
+      transform: rotate(-16deg);
+      z-index: 2;
     }
 
-    .cluster-battery-tr {
-      position: absolute;
-      top: 6px;
-      right: 14px;
-      font-size: clamp(25px, 4vh, 33px);
-      --rot: 12deg;
-      animation: floatSide 4s ease-in-out infinite 0.4s;
-      z-index: 3;
-    }
-
-    .cluster-spark-br {
-      position: absolute;
-      bottom: 8px;
-      right: 12px;
-      font-size: clamp(24px, 3.8vh, 32px);
-      --rot: 8deg;
-      animation: floatSide 3.6s ease-in-out infinite 0.8s;
-      z-index: 3;
-    }
-
-    .cluster-zpsvitlo-pill {
+    .sticker-battery {
       position: absolute;
       bottom: 6px;
-      left: 2px;
-      z-index: 4;
-      background: #ffffff;
-      color: #09090b;
-      border: 2.5px solid #ffffff;
-      border-radius: 999px;
-      padding: 5px 12px;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
+      right: 16px;
+      font-size: 34px;
+      transform: rotate(14deg);
+      z-index: 2;
+    }
+
+    .sticker-sparkle-1 {
+      position: absolute;
+      top: 8px;
+      right: 22px;
+      font-size: 28px;
+      transform: rotate(10deg);
+    }
+
+    .sticker-sparkle-2 {
+      position: absolute;
+      bottom: 10px;
+      left: 24px;
+      font-size: 24px;
+      transform: rotate(-12deg);
+    }
+
+    @keyframes floatMain {
+      0%, 100% { transform: translateY(0) rotate(-4deg); }
+      50% { transform: translateY(-6px) rotate(-1deg); }
+    }
+
+    .splash-brand {
       font-family: var(--font-display);
-      font-size: clamp(10px, 2.7vw, 12px);
+      font-size: clamp(26px, 7vw, 38px);
       font-weight: 900;
-      letter-spacing: 0.03em;
-      box-shadow: 0 10px 22px rgba(9, 9, 11, 0.16), 0 0 0 1px rgba(9, 9, 11, 0.08);
-      --rot: -6deg;
-      transform: rotate(-6deg);
-      animation: floatSide 4.2s ease-in-out infinite 0.2s;
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+      color: #ffffff;
     }
 
-    .entry-title {
-      font-family: var(--font-display);
-      font-size: clamp(1.9rem, 8.2vw, 3.6rem);
-      font-weight: 900;
-      letter-spacing: -0.04em;
-      line-height: 1;
-      color: #09090b;
+    .splash-subtitle {
+      font-size: 13px;
+      color: #a1a1aa;
+      max-width: 340px;
+      line-height: 1.4;
     }
 
-    .entry-date-sub {
-      font-family: var(--font-mono);
-      font-size: clamp(10px, 2.8vw, 12px);
-      font-weight: 700;
-      color: var(--text-muted-light);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    .entry-status-card {
-      width: 100%;
-      background: #ffffff;
-      border: 1.5px solid var(--border-light);
+    .splash-clock-card {
+      background: #121216;
+      border: 1px solid #27272f;
       border-radius: 16px;
-      padding: clamp(9px, 1.6vh, 13px) 14px;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
-    }
-
-    .entry-stat-cell {
-      text-align: center;
-    }
-
-    .entry-stat-lbl {
-      font-family: var(--font-mono);
-      font-size: 9px;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: var(--text-muted-light);
-    }
-
-    .entry-stat-val {
-      font-family: var(--font-mono);
-      font-size: clamp(13px, 3.5vw, 16px);
-      font-weight: 800;
-      color: #09090b;
-      margin-top: 2px;
-    }
-
-    .entry-bottom {
-      max-width: 540px;
-      width: 100%;
-      margin: 0 auto;
+      padding: 10px 20px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 9px;
-      flex-shrink: 0;
+      gap: 2px;
     }
 
-    .btn-enter {
-      width: 100%;
-      min-height: 52px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      background: #09090b;
-      color: #ffffff;
-      border: 2px solid #09090b;
-      border-radius: 999px;
-      padding: 13px 22px;
-      font-family: var(--font-display);
-      font-size: clamp(12px, 3.4vw, 14px);
+    .splash-clock-label {
+      font-family: var(--font-mono);
+      font-size: 9.5px;
+      color: #71717a;
+      letter-spacing: 0.08em;
+    }
+
+    .splash-clock-time {
+      font-family: var(--font-mono);
+      font-size: 22px;
       font-weight: 800;
-      letter-spacing: 0.02em;
-      cursor: pointer;
-      box-shadow: 0 14px 28px rgba(9, 9, 11, 0.24);
-      transition: transform 0.16s ease, background 0.16s ease;
+      color: #ffffff;
+      letter-spacing: 0.04em;
     }
 
-    .btn-enter:active {
-      transform: scale(0.98);
-      background: #27272a;
-    }
-
-    .entry-disclaimer {
+    .splash-bottom {
       width: 100%;
-      text-align: center;
-      font-size: clamp(9.5px, 2.3vw, 11px);
-      line-height: 1.35;
-      color: var(--text-muted-light);
-      padding-top: 7px;
-      border-top: 1px solid var(--border-light);
+      max-width: 440px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
     }
 
-    /* =====================================================================
-       2. ОСНОВНИЙ ЕКРАН (БІЛИЙ ВЕРХ + ЧОРНИЙ НИЗ)
-       ===================================================================== */
-    .container {
-      max-width: 1140px;
-      margin: 0 auto;
-      padding: 0 clamp(12px, 3.2vw, 28px);
-    }
-
-    .white-zone {
+    .splash-cta-btn {
+      width: 100%;
+      min-height: 54px;
+      border: none;
+      border-radius: 18px;
       background: #ffffff;
       color: #09090b;
-      padding-top: env(safe-area-inset-top);
-      padding-bottom: 24px;
+      font-family: var(--font-display);
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 12px 30px rgba(255, 255, 255, 0.16);
+      transition: transform 0.15s ease, background 0.15s ease;
+    }
+
+    .splash-cta-btn:active {
+      transform: scale(0.98);
+      background: #e4e4e7;
+    }
+
+    .splash-disclaimer {
+      font-size: 10.5px;
+      color: #71717a;
+      text-align: center;
+      line-height: 1.35;
+    }
+
+    /* Основний двозонний HUD */
+    .container {
+      width: 100%;
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 0 14px;
+    }
+
+    .top-white-zone {
+      background: var(--bg-white);
+      color: var(--text-dark);
       border-bottom-left-radius: 26px;
       border-bottom-right-radius: 26px;
-      position: relative;
-      z-index: 10;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+      padding-top: calc(10px + env(safe-area-inset-top));
+      padding-bottom: 18px;
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45);
     }
 
-    .sticky-header {
-      position: sticky;
-      top: 0;
-      z-index: 30;
-      background: rgba(255, 255, 255, 0.94);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border-light);
-    }
-
-    .topbar {
+    .top-navbar {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
+      gap: 10px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .brand-lockup {
+      display: flex;
+      align-items: center;
       gap: 8px;
-      padding: 10px 0;
     }
 
-    .brand-group {
-      display: flex;
-      align-items: center;
-      gap: 9px;
-      cursor: pointer;
-      min-height: 44px;
-    }
-
-    .brand-icon {
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
-      background: #09090b;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 19px;
-      flex-shrink: 0;
-    }
-
-    .brand-name {
+    .brand-title {
       font-family: var(--font-display);
-      font-size: 14px;
+      font-size: 16px;
       font-weight: 900;
       letter-spacing: -0.03em;
       color: #09090b;
-    }
-
-    .brand-sub {
-      font-family: var(--font-mono);
-      font-size: 8.5px;
-      color: var(--text-muted-light);
-      letter-spacing: 0.03em;
     }
 
     .nav-actions {
@@ -507,21 +349,42 @@
       gap: 6px;
     }
 
+    .hud-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 36px;
+      padding: 6px 11px;
+      border-radius: 999px;
+      background: var(--bg-snow);
+      border: 1px solid var(--border-light);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      color: #09090b;
+    }
+
     .btn-light {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 6px;
-      padding: 8px 11px;
-      border-radius: 11px;
-      background: var(--bg-snow);
-      border: 1px solid var(--border-light);
+      min-height: 36px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: #ffffff;
+      border: 1px solid #d4d4d8;
       color: #09090b;
-      font-family: var(--font-mono);
-      font-size: 10.5px;
+      font-family: var(--font-sans);
+      font-size: 12px;
       font-weight: 700;
-      text-decoration: none;
       cursor: pointer;
+      transition: background 0.15s ease, transform 0.1s ease;
+    }
+
+    .btn-light:active {
+      background: #f4f4f6;
+      transform: scale(0.97);
     }
 
     .btn-dark-pill {
@@ -529,107 +392,124 @@
       align-items: center;
       justify-content: center;
       gap: 6px;
-      padding: 8px 13px;
-      border-radius: 11px;
+      min-height: 36px;
+      padding: 6px 14px;
+      border-radius: 999px;
       background: #09090b;
       border: 1px solid #09090b;
       color: #ffffff;
-      font-family: var(--font-mono);
-      font-size: 10.5px;
-      font-weight: 700;
-      text-decoration: none;
+      font-family: var(--font-sans);
+      font-size: 12px;
+      font-weight: 800;
       cursor: pointer;
+      transition: opacity 0.15s ease, transform 0.1s ease;
     }
 
-    .gav-banner-top {
+    .btn-dark-pill:active {
+      opacity: 0.85;
+      transform: scale(0.97);
+    }
+
+    .spin-icon {
+      display: inline-block;
+      animation: spinAnim 0.85s linear infinite;
+    }
+
+    @keyframes spinAnim {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .gav-alert-banner {
+      margin-top: 12px;
       background: #09090b;
       color: #ffffff;
+      border: 2px solid #ef4444;
       border-radius: 16px;
-      padding: 13px 15px;
-      margin-top: 14px;
+      padding: 12px 14px;
       display: flex;
-      flex-wrap: wrap;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .gav-alert-top {
+      display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 10px;
-      border: 2px solid #09090b;
+      gap: 8px;
+    }
+
+    .gav-badge {
+      background: #ef4444;
+      color: #ffffff;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 999px;
     }
 
     .section-head-light {
       display: flex;
       flex-wrap: wrap;
-      align-items: flex-end;
+      align-items: center;
       justify-content: space-between;
       gap: 10px;
-      margin-top: 16px;
-      margin-bottom: 12px;
+      margin-top: 14px;
+      margin-bottom: 10px;
     }
 
     .step-label {
       font-family: var(--font-mono);
       font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.07em;
-      text-transform: uppercase;
-      color: var(--text-muted-light);
+      font-weight: 800;
+      color: #71717a;
+      letter-spacing: 0.06em;
     }
 
     .section-title-light {
       font-family: var(--font-display);
-      font-size: clamp(1.05rem, 4vw, 1.5rem);
+      font-size: 15px;
       font-weight: 800;
-      letter-spacing: -0.03em;
       color: #09090b;
-      margin-top: 3px;
+      margin-top: 2px;
     }
 
-    .sync-box {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: var(--bg-snow);
-      border: 1px solid var(--border-light);
-      padding: 7px 11px;
-      border-radius: 12px;
-      font-family: var(--font-mono);
-      font-size: 10px;
-    }
-
-    /* Сітка 12 підчерг: 6x2 на ПК, 4x3 на телефоні */
+    /* Сітка 12 підчерг (4x3 на мобільному, 6x2 на ПК) */
     .queues-grid {
       display: grid;
-      grid-template-columns: repeat(6, minmax(0, 1fr));
-      gap: 8px;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 7px;
     }
 
-    @media (max-width: 900px) {
+    @media (min-width: 768px) {
       .queues-grid {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 6px;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 9px;
       }
     }
 
     .queue-card {
-      background: var(--bg-snow);
-      border: 1.5px solid var(--border-light);
-      border-radius: 14px;
-      padding: 9px 8px;
-      text-align: left;
-      cursor: pointer;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      gap: 4px;
-      min-height: 64px;
-      transition: all 0.16s ease;
+      min-height: 58px;
+      padding: 8px 9px;
+      border-radius: 14px;
+      background: var(--bg-snow);
+      border: 1.5px solid var(--border-light);
       color: #09090b;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.14s ease;
     }
 
     .queue-card.active {
       background: #09090b;
       border-color: #09090b;
       color: #ffffff;
-      box-shadow: 0 8px 20px rgba(9, 9, 11, 0.22);
+      box-shadow: 0 8px 18px rgba(9, 9, 11, 0.22);
+      transform: translateY(-1px);
     }
 
     .queue-card-top {
@@ -641,231 +521,194 @@
     }
 
     .queue-num {
-      font-family: var(--font-mono);
-      font-size: clamp(13px, 3.6vw, 16px);
+      font-family: var(--font-display);
+      font-size: 14px;
       font-weight: 800;
     }
 
     .queue-badge {
       font-family: var(--font-mono);
-      font-size: 8px;
+      font-size: 8.5px;
       font-weight: 800;
       padding: 2px 5px;
-      border-radius: 5px;
-      letter-spacing: 0.02em;
-      white-space: nowrap;
+      border-radius: 6px;
     }
 
-    .badge-on { background: #e4e4e7; color: #09090b; }
-    .queue-card.active .badge-on { background: #ffffff; color: #09090b; }
+    .badge-on {
+      background: rgba(34, 197, 94, 0.16);
+      color: #15803d;
+    }
 
-    .badge-off { background: #09090b; color: #ffffff; }
-    .queue-card.active .badge-off { background: #27272a; color: #e4e4e7; border: 1px solid rgba(255,255,255,0.25); }
+    .queue-card.active .badge-on {
+      background: rgba(34, 197, 94, 0.25);
+      color: #4ade80;
+    }
 
-    .badge-jur { background: #e4e4e7; color: #3f3f46; }
-    .queue-card.active .badge-jur { background: #ffffff; color: #09090b; }
+    .badge-off {
+      background: rgba(239, 68, 68, 0.15);
+      color: #b91c1c;
+    }
+
+    .queue-card.active .badge-off {
+      background: rgba(239, 68, 68, 0.28);
+      color: #fca5a5;
+    }
+
+    .badge-jur {
+      background: rgba(245, 158, 11, 0.18);
+      color: #b45309;
+    }
+
+    .queue-card.active .badge-jur {
+      background: rgba(245, 158, 11, 0.28);
+      color: #fcd34d;
+    }
 
     .queue-next {
       font-family: var(--font-mono);
-      font-size: 9px;
-      opacity: 0.72;
-      line-height: 1.2;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+      font-size: 9.5px;
+      color: #71717a;
+      margin-top: 4px;
     }
 
-    .selected-info-bar {
-      margin-top: 12px;
+    .queue-card.active .queue-next {
+      color: #a1a1aa;
+    }
+
+    .selected-queue-meta {
+      margin-top: 10px;
       background: var(--bg-snow);
       border: 1px solid var(--border-light);
+      border-radius: 14px;
+      padding: 10px 12px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    /* Нижній чорний тактичний блок */
+    .bottom-dark-zone {
+      padding: 18px 0 calc(32px + env(safe-area-inset-bottom));
+      background: var(--bg-dark);
+      color: var(--text-white);
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    @media (min-width: 820px) {
+      .hero-grid {
+        grid-template-columns: 1.45fr 1fr;
+      }
+    }
+
+    .tactical-card {
+      background: var(--bg-card-dark);
+      border: 1px solid var(--border-dark);
+      border-radius: 22px;
+      padding: 16px;
+    }
+
+    .hero-top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .white-chip {
+      background: #ffffff;
+      color: #09090b;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 800;
+      padding: 4px 9px;
+      border-radius: 999px;
+    }
+
+    .hero-main-status {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .hero-status-title {
+      font-family: var(--font-display);
+      font-size: clamp(19px, 5vw, 25px);
+      font-weight: 900;
+      line-height: 1.15;
+    }
+
+    .hero-status-sub {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: #a1a1aa;
+      margin-top: 4px;
+    }
+
+    .countdown-box {
+      background: #17171d;
+      border: 1px solid #2b2b35;
       border-radius: 16px;
       padding: 12px 14px;
       display: flex;
       flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
+      gap: 10px;
     }
 
-    .selected-info-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      flex: 1 1 260px;
-    }
-
-    .selected-code-box {
-      width: 46px;
-      height: 46px;
-      border-radius: 12px;
-      background: #09090b;
-      color: #ffffff;
+    .countdown-value {
       font-family: var(--font-mono);
-      font-size: 16px;
-      font-weight: 800;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-
-    /* =====================================================================
-       3. НИЖНЯ ЧОРНА ТАКТИЧНА МІЛІТАРІ-ЗОНА
-       ===================================================================== */
-    .black-zone {
-      background: #09090b;
-      color: #fafafa;
-      padding: 24px 0 calc(28px + env(safe-area-inset-bottom));
-    }
-
-    .telemetry-grid {
-      display: grid;
-      grid-template-columns: 1.4fr 1fr;
-      gap: 14px;
-      margin-bottom: 18px;
-    }
-
-    @media (max-width: 860px) {
-      .telemetry-grid { grid-template-columns: 1fr; }
-    }
-
-    .tactical-card {
-      background: var(--bg-coal);
-      border: 1px solid var(--border-dark);
-      border-radius: 20px;
-      padding: 18px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .radar-line {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 45%;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, #ffffff, transparent);
-      opacity: 0;
-    }
-
-    .radar-line.scanning {
-      opacity: 0.85;
-      animation: radarSweep 0.85s ease-out;
-    }
-
-    .hero-status-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      margin-top: 10px;
-    }
-
-    .hero-status-title {
-      font-family: var(--font-display);
-      font-size: clamp(1.25rem, 5vw, 2.05rem);
-      font-weight: 900;
-      letter-spacing: -0.03em;
-      color: #ffffff;
-      line-height: 1.1;
-    }
-
-    .hero-status-sub {
-      font-family: var(--font-mono);
-      font-size: 10px;
-      color: var(--text-muted-dark);
-      margin-top: 5px;
-      letter-spacing: 0.03em;
-    }
-
-    .countdown-panel {
-      margin-top: 16px;
-      background: var(--bg-graphite);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 16px;
-      padding: 14px;
-    }
-
-    .countdown-top {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: baseline;
-      justify-content: space-between;
-      gap: 6px;
-    }
-
-    .countdown-digits {
-      font-family: var(--font-mono);
-      font-size: clamp(1.45rem, 6vw, 2.15rem);
+      font-size: clamp(24px, 6.5vw, 32px);
       font-weight: 800;
       color: #ffffff;
-      letter-spacing: -0.02em;
-      margin-top: 4px;
+      letter-spacing: 0.04em;
     }
 
     .progress-track {
       width: 100%;
-      height: 7px;
-      background: #09090b;
+      height: 6px;
+      background: #27272f;
       border-radius: 999px;
       overflow: hidden;
-      margin-top: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      margin-top: 10px;
     }
 
     .progress-fill {
       height: 100%;
       background: #ffffff;
       border-radius: 999px;
-      transition: width 0.5s ease;
+      transition: width 0.4s ease;
     }
 
-    .progress-labels {
-      display: flex;
-      justify-content: space-between;
-      font-family: var(--font-mono);
-      font-size: 9.5px;
-      color: var(--text-muted-dark);
-      margin-top: 6px;
-    }
-
-    .stats-pair {
+    .stats-mini-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-top: 10px;
+      gap: 8px;
     }
 
-    .stat-mini {
-      background: var(--bg-graphite);
-      border: 1px solid rgba(255, 255, 255, 0.09);
+    .stat-box {
+      background: #17171d;
+      border: 1px solid #27272f;
       border-radius: 14px;
       padding: 12px;
     }
 
-    .stat-mini-val {
-      font-family: var(--font-mono);
-      font-size: 18px;
-      font-weight: 800;
-      color: #ffffff;
-      margin-top: 3px;
-    }
-
-    .source-feed-box {
-      margin-top: 12px;
-      background: #09090b;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 14px;
-      padding: 12px;
-    }
-
-    /* Тактична мілітарі-таблиця */
-    .matrix-section {
-      background: var(--bg-coal);
+    /* Тактична сітка 8x3 + зведені 12 підчерг */
+    .matrix-wrapper {
+      background: var(--bg-card-dark);
       border: 1px solid var(--border-dark);
-      border-radius: 20px;
-      padding: 18px;
+      border-radius: 22px;
+      padding: 16px;
     }
 
     .matrix-header {
@@ -873,26 +716,54 @@
       flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
-      padding-bottom: 14px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      gap: 10px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-dark);
     }
 
-    .legend-row {
+    .view-switcher {
+      display: inline-flex;
+      background: #18181f;
+      border: 1px solid #2b2b35;
+      border-radius: 12px;
+      padding: 3px;
+      gap: 3px;
+    }
+
+    .view-switch-btn {
+      min-height: 34px;
+      padding: 6px 12px;
+      border: none;
+      border-radius: 9px;
+      background: transparent;
+      color: #a1a1aa;
+      font-family: var(--font-sans);
+      font-size: 11.5px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .view-switch-btn.active {
+      background: #ffffff;
+      color: #09090b;
+    }
+
+    .legend-bar {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
-      gap: 10px;
-      margin: 12px 0;
+      gap: 8px;
+      padding: 10px 0 12px;
       font-family: var(--font-mono);
-      font-size: 10px;
-      color: var(--text-muted-dark);
+      font-size: 10.5px;
+      color: #a1a1aa;
     }
 
     .legend-items {
       display: flex;
       flex-wrap: wrap;
+      align-items: center;
       gap: 12px;
     }
 
@@ -902,174 +773,83 @@
       gap: 6px;
     }
 
-    .legend-swatch {
-      width: 13px;
-      height: 13px;
-      border-radius: 4px;
-      border: 1px solid rgba(255, 255, 255, 0.35);
-      flex-shrink: 0;
-    }
-
-    /* Загальна тактична матриця 12 x 48 зі скролом, фіксованою колонкою та лазерною лінією */
-    .matrix-scroll {
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      border-radius: 14px;
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      background: #09090b;
-    }
-
-    .matrix-table {
-      width: 100%;
-      min-width: 880px;
-      border-collapse: collapse;
-      font-family: var(--font-mono);
-      font-size: 10px;
-    }
-
-    .matrix-table th, .matrix-table td {
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    }
-
-    .matrix-sticky-col {
-      position: sticky;
-      left: 0;
-      z-index: 6;
-      padding: 7px 10px;
-      border-right: 1px solid rgba(255, 255, 255, 0.18);
-      white-space: nowrap;
-      text-align: left;
-    }
-
-    .slot-cell {
-      padding: 3px 1px;
-      position: relative;
-    }
-
-    .slot-cell.laser-now::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 50%;
-      width: 2px;
+    .legend-swatch-on {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
       background: #ffffff;
-      box-shadow: 0 0 8px #ffffff, 0 0 14px #ffffff;
-      z-index: 4;
-      pointer-events: none;
     }
 
-    /* Перемикач двох режимів таблиці */
-    .view-switcher {
-      display: inline-flex;
-      align-items: center;
-      background: #09090b;
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      border-radius: 12px;
-      padding: 3px;
-      gap: 4px;
+    .legend-swatch-off {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+      border: 1px solid #52525b;
+      background: repeating-linear-gradient(
+        -45deg,
+        #18181f,
+        #18181f 3px,
+        #2e2e38 3px,
+        #2e2e38 6px
+      );
     }
 
-    .view-tab-btn {
-      padding: 7px 12px;
-      min-height: 36px;
-      border-radius: 9px;
-      border: none;
-      background: transparent;
-      color: #a1a1aa;
-      font-family: var(--font-mono);
-      font-size: 10.5px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.16s ease;
-    }
-
-    .view-tab-btn.active {
-      background: #ffffff;
-      color: #09090b;
-    }
-
-    /* Варіант 1 (ОСНОВНИЙ): Детальна тактична мілітарі-сітка 24 години (:00 / :30) */
     .detail-hours-grid {
       display: grid;
-      grid-template-columns: repeat(8, minmax(0, 1fr));
+      grid-template-columns: repeat(3, 1fr);
       gap: 8px;
     }
 
-    @media (max-width: 1024px) {
+    @media (min-width: 640px) {
       .detail-hours-grid {
-        grid-template-columns: repeat(6, minmax(0, 1fr));
-        gap: 7px;
+        grid-template-columns: repeat(6, 1fr);
       }
     }
 
-    @media (max-width: 720px) {
+    @media (min-width: 960px) {
       .detail-hours-grid {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 6px;
-      }
-    }
-
-    @media (max-width: 420px) {
-      .detail-hours-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 6px;
+        grid-template-columns: repeat(8, 1fr);
       }
     }
 
     .hour-card {
-      background: #131317;
-      border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: 14px;
-      padding: 9px 9px 8px;
+      padding: 9px 10px;
+      border: 1.5px solid #27272f;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      gap: 6px;
-      position: relative;
-      min-height: 76px;
-      transition: transform 0.15s ease, border-color 0.15s ease;
+      min-height: 82px;
+      transition: transform 0.12s ease, border-color 0.15s ease;
     }
 
     .hour-card.card-on {
-      background: #18181d;
-      border-color: rgba(255, 255, 255, 0.22);
+      background: #15151b;
     }
 
     .hour-card.card-off {
-      background-color: #121216;
-      background-image: repeating-linear-gradient(
+      background: repeating-linear-gradient(
         -45deg,
-        #121216,
-        #121216 6px,
-        #1e1e25 6px,
-        #1e1e25 12px
+        #121217,
+        #121217 6px,
+        #1c1c24 6px,
+        #1c1c24 12px
       );
-      border-color: rgba(255, 255, 255, 0.1);
     }
 
     .hour-card.card-partial {
-      background-color: #15151a;
-      background-image: repeating-linear-gradient(
-        -45deg,
-        #15151a,
-        #15151a 8px,
-        #1c1c22 8px,
-        #1c1c22 16px
-      );
-      border-color: rgba(255, 255, 255, 0.18);
+      background: linear-gradient(135deg, #16161d 50%, #20202a 50%);
     }
 
     .hour-card.is-now {
-      border: 2px solid #ffffff !important;
-      box-shadow: 0 0 22px rgba(255, 255, 255, 0.22);
+      border: 2px solid #ffffff;
+      box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.15);
     }
 
     .hour-card-head {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 4px;
       font-family: var(--font-mono);
       font-size: 11px;
       font-weight: 800;
@@ -1079,25 +859,10 @@
     .hour-status-text {
       font-family: var(--font-mono);
       font-size: 9px;
-      font-weight: 800;
+      font-weight: 700;
       letter-spacing: 0.04em;
-      text-transform: uppercase;
       color: #a1a1aa;
-    }
-
-    .hour-card.card-on .hour-status-text {
-      color: #ffffff;
-    }
-
-    .hour-card.card-partial .hour-status-text {
-      color: #e4e4e7;
-    }
-
-    .half-slots-wrap {
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-      margin-top: 2px;
+      margin: 4px 0;
     }
 
     .half-bars-row {
@@ -1109,168 +874,132 @@
     .half-bar {
       height: 5px;
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.15);
     }
 
-    .half-bar.is-on {
-      background: #ffffff;
-      box-shadow: 0 0 6px rgba(255, 255, 255, 0.45);
-    }
-
-    .half-bar.is-off {
-      background: rgba(255, 255, 255, 0.16);
-    }
-
-    .half-bar.is-jur {
-      background: rgba(255, 255, 255, 0.45);
-    }
+    .half-bar.is-on { background: #ffffff; }
+    .half-bar.is-off { background: #3f3f46; }
+    .half-bar.is-jur { background: #f59e0b; }
 
     .half-labels-row {
       display: flex;
-      align-items: center;
       justify-content: space-between;
       font-family: var(--font-mono);
       font-size: 8.5px;
-      font-weight: 700;
       color: #71717a;
+      margin-top: 3px;
     }
 
-    @media (max-width: 900px) {
-      .detail-hours-grid {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 6px;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .detail-hours-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 6px;
-      }
-    }
-
-    .hour-card {
-      background: #131317;
-      border: 1px solid rgba(255, 255, 255, 0.11);
-      border-radius: 12px;
-      padding: 7px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      position: relative;
-    }
-
-    .hour-card.is-now {
-      border: 2px solid #ffffff;
-      box-shadow: 0 0 18px rgba(255, 255, 255, 0.18);
-      background: #1b1b21;
-    }
-
-    .hour-card-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 4px;
-      font-family: var(--font-mono);
-      font-size: 10.5px;
-      font-weight: 800;
-      color: #e4e4e7;
-    }
-
-    .now-badge {
-      background: #ffffff;
-      color: #09090b;
-      font-size: 8px;
-      font-weight: 900;
-      padding: 1px 5px;
-      border-radius: 4px;
-      letter-spacing: 0.04em;
-    }
-
-    .half-slots-pair {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 4px;
-    }
-
-    .half-slot-pill {
-      height: 28px;
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: var(--font-mono);
-      font-size: 9px;
-      font-weight: 800;
-      border: 1px solid rgba(255, 255, 255, 0.18);
-    }
-
-    .half-slot-pill.active-half {
-      outline: 2px solid #ffffff;
-      outline-offset: 1px;
-    }
-
-    .intervals-summary-box {
-      margin-top: 14px;
-      background: var(--bg-graphite);
-      border: 1px solid rgba(255, 255, 255, 0.12);
+    .all-matrix-scroll {
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      border: 1px solid #27272f;
       border-radius: 14px;
-      padding: 14px;
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
     }
 
-    .btn-outline-white {
-      padding: 9px 14px;
-      border-radius: 11px;
-      background: transparent;
-      border: 1px solid rgba(255, 255, 255, 0.28);
-      color: #ffffff;
+    .all-matrix-table {
+      width: 100%;
+      min-width: 780px;
+      border-collapse: collapse;
       font-family: var(--font-mono);
-      font-size: 11px;
-      font-weight: 700;
-      cursor: pointer;
+      font-size: 10px;
     }
 
-    .site-footer {
-      margin-top: 24px;
-      padding-top: 18px;
-      border-top: 1px solid rgba(255, 255, 255, 0.12);
+    .all-matrix-table th,
+    .all-matrix-table td {
+      padding: 4px 2px;
+      text-align: center;
+      border-bottom: 1px solid #22222a;
+    }
+
+    .matrix-sticky-col {
+      position: sticky;
+      left: 0;
+      z-index: 2;
+      min-width: 64px;
+      padding: 6px 8px !important;
+      text-align: left !important;
+      border-right: 1px solid #2e2e38;
+    }
+
+    .hatch-on { background: #ffffff; }
+    .hatch-off {
+      background: repeating-linear-gradient(
+        -45deg,
+        #18181f,
+        #18181f 3px,
+        #2d2d37 3px,
+        #2d2d37 6px
+      );
+    }
+    .hatch-jur { background: #f59e0b; }
+
+    .intervals-footer-bar {
+      margin-top: 12px;
+      background: #15151b;
+      border: 1px solid #27272f;
+      border-radius: 16px;
+      padding: 12px 14px;
       display: flex;
       flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
       gap: 10px;
-      font-size: 11px;
-      color: var(--text-muted-dark);
     }
 
-    /* Модальні вікна */
+    .copy-schedule-btn {
+      min-height: 40px;
+      padding: 8px 16px;
+      border-radius: 12px;
+      background: transparent;
+      border: 1.5px solid #3f3f46;
+      color: #ffffff;
+      font-family: var(--font-sans);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .copy-schedule-btn:active {
+      background: #27272f;
+    }
+
+    .site-footer {
+      margin-top: 18px;
+      padding-top: 14px;
+      border-top: 1px solid #1e1e26;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 11px;
+      color: #71717a;
+    }
+
+    /* Модальні вікна (Ефір + Повідомлення всім) */
     .modal-backdrop {
       position: fixed;
       inset: 0;
-      z-index: 120;
-      background: rgba(9, 9, 11, 0.82);
-      backdrop-filter: blur(8px);
+      z-index: 10000;
+      background: rgba(0, 0, 0, 0.78);
+      backdrop-filter: blur(6px);
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 14px;
+      padding: 16px;
     }
 
     .modal-card {
+      width: 100%;
+      max-width: 460px;
+      max-height: 90dvh;
+      overflow-y: auto;
       background: #ffffff;
       color: #09090b;
-      border-radius: 22px;
-      max-width: 480px;
-      width: 100%;
-      padding: 20px;
-      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
-      max-height: 88dvh;
-      overflow-y: auto;
+      border-radius: 24px;
+      padding: 18px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65);
     }
 
     .modal-header {
@@ -1279,435 +1008,430 @@
       justify-content: space-between;
       gap: 10px;
       padding-bottom: 12px;
-      border-bottom: 1px solid var(--border-light);
-      margin-bottom: 14px;
+      border-bottom: 1px solid #e4e4e7;
+      margin-bottom: 12px;
     }
 
     .modal-close {
-      width: 38px;
-      height: 38px;
-      min-height: 38px;
-      border-radius: 10px;
-      border: 1px solid var(--border-light);
-      background: var(--bg-snow);
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 1px solid #e4e4e7;
+      background: #f4f4f6;
       color: #09090b;
       font-weight: 800;
       cursor: pointer;
     }
 
-    .field-input, .field-textarea {
+    .modal-tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 5px;
+      background: #f4f4f6;
+      padding: 4px;
+      border-radius: 14px;
+      margin-bottom: 12px;
+    }
+
+    .modal-tab-btn {
+      min-height: 36px;
+      border: none;
+      border-radius: 10px;
+      background: transparent;
+      color: #52525b;
+      font-family: var(--font-sans);
+      font-size: 11.5px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .modal-tab-btn.active {
+      background: #09090b;
+      color: #ffffff;
+    }
+
+    .field-input,
+    .field-textarea {
       width: 100%;
-      border: 1.5px solid var(--border-light);
-      border-radius: 12px;
-      padding: 10px 12px;
+      font-size: 16px;
       font-family: var(--font-sans);
       color: #09090b;
-      background: var(--bg-snow);
+      background: #f4f4f6;
+      border: 1.5px solid #d4d4d8;
+      border-radius: 12px;
+      padding: 10px 12px;
       outline: none;
     }
 
-    .field-input:focus, .field-textarea:focus {
+    .field-input:focus,
+    .field-textarea:focus {
       border-color: #09090b;
       background: #ffffff;
     }
 
-    .toast-box {
+    .feedback-banner {
+      border-radius: 12px;
+      padding: 9px 12px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      line-height: 1.4;
+      margin-top: 8px;
+    }
+
+    .feedback-ok {
+      background: #dcfce7;
+      border: 1px solid #86efac;
+      color: #14532d;
+    }
+
+    .feedback-err {
+      background: #fee2e2;
+      border: 1px solid #fca5a5;
+      color: #7f1d1d;
+    }
+
+    .live-alert-card {
+      width: 100%;
+      max-width: 440px;
+      background: #09090b;
+      color: #ffffff;
+      border: 2px solid #ffffff;
+      border-radius: 24px;
+      padding: 20px;
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.85);
+    }
+
+    .live-alert-card.is-gav {
+      border-color: #ef4444;
+    }
+
+    .toast-pill {
       position: fixed;
-      bottom: calc(16px + env(safe-area-inset-bottom));
+      bottom: calc(18px + env(safe-area-inset-bottom));
       left: 50%;
       transform: translateX(-50%);
-      z-index: 150;
+      z-index: 11000;
       background: #ffffff;
       color: #09090b;
-      border: 2px solid #09090b;
-      border-radius: 14px;
+      border: 1px solid #d4d4d8;
+      border-radius: 999px;
       padding: 10px 16px;
+      font-size: 12.5px;
+      font-weight: 700;
       display: flex;
       align-items: center;
       gap: 8px;
-      font-family: var(--font-mono);
-      font-size: 11px;
-      font-weight: 700;
-      white-space: nowrap;
-      box-shadow: 0 14px 32px rgba(0, 0, 0, 0.45);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+      max-width: 92vw;
     }
   </style>
 </head>
 <body class="splash-locked">
 
-  <!-- =====================================================================
-       1. СТАРТОВИЙ ЕКРАН (ФІКСОВАНИЙ HUD 100dvh БЕЗ ПРОКРУТКИ)
-       ===================================================================== -->
-  <section id="splashScreen" class="entry-screen">
-    <div class="entry-top">
-      <div class="hud-pill">
-        <span class="ios-sticker" style="font-size: 13px;">⚡</span>
-        <span>ZP SVITLO</span>
-      </div>
-      <div class="hud-pill">
-        <span class="live-dot"></span>
-        <span id="entryConnBadge">LIVE • ЗАПОРІЖЖЯ</span>
-      </div>
+  <!-- 1. СТАРТОВИЙ ЕКРАН -->
+  <section id="splashScreen" aria-label="Стартовий екран ZP SVITLO">
+    <div class="splash-top-bar">
+      <span class="splash-live-pill">
+        <span class="pulse-dot"></span>
+        <span>М. ЗАПОРІЖЖЯ • LIVE</span>
+      </span>
+      <span>12 ПІДЧЕРГ</span>
     </div>
 
-    <div class="entry-center animate-fade-up">
+    <div class="splash-center">
       <div class="sticker-cluster" aria-hidden="true">
-        <span class="ios-sticker cluster-bulb-tl">💡</span>
-        <span class="ios-sticker cluster-battery-tr">🔋</span>
-        <span class="ios-sticker-xl cluster-bolt-main">⚡</span>
-        <span class="ios-sticker cluster-spark-br">✨</span>
-        <div class="cluster-zpsvitlo-pill">
-          <span style="font-size: 13px;">⚡</span>
-          <span>ZPSVITLO</span>
-        </div>
+        <span class="ios-sticker sticker-bulb">💡</span>
+        <span class="ios-sticker sticker-sparkle-1">✨</span>
+        <span class="ios-sticker sticker-main">⚡</span>
+        <span class="ios-sticker sticker-sparkle-2">✨</span>
+        <span class="ios-sticker sticker-battery">🔋</span>
       </div>
 
-      <div>
-        <h1 class="entry-title">ZP SVITLO</h1>
-        <div id="entryDateText" class="entry-date-sub" style="margin-top: 6px;">ЗАПОРІЖЖЯ • МОНІТОРИНГ</div>
-      </div>
+      <h1 class="splash-brand">⚡ ZPSVITLO</h1>
+      <p class="splash-subtitle">
+        Оперативний моніторинг графіків погодинних та аварійних відключень у м. Запоріжжя
+      </p>
 
-      <div class="entry-status-card">
-        <div class="entry-stat-cell">
-          <div class="entry-stat-lbl">ЧАС ЗАПОРІЖЖЯ</div>
-          <div id="entryClock" class="entry-stat-val">--:--:--</div>
-        </div>
-        <div class="entry-stat-cell">
-          <div class="entry-stat-lbl">СТАН МЕРЕЖІ</div>
-          <div id="entryGridStatus" class="entry-stat-val">ГПВ АКТИВНИЙ</div>
-        </div>
+      <div class="splash-clock-card">
+        <span class="splash-clock-label">ЧАС У ЗАПОРІЖЖІ (KYIV)</span>
+        <span id="splashClock" class="splash-clock-time">--:--:--</span>
       </div>
     </div>
 
-    <div class="entry-bottom">
-      <button type="button" id="enterAppBtn" onclick="window.enterApp()" class="btn-enter">
-        <span>Увійти до моніторингу →</span>
+    <div class="splash-bottom">
+      <button type="button" id="enterAppBtn" class="splash-cta-btn">
+        <span>Увійти до моніторингу</span>
+        <span>→</span>
       </button>
-
-      <div class="entry-disclaimer">
-        <strong>ZP SVITLO — неофіційний сайт.</strong> Інформація береться з офіційних ресурсів Запоріжжяобленерго і може бути неточною. Перевіряйте офіційні канали.
-      </div>
+      <p class="splash-disclaimer">
+        Неофіційний моніторинг. Дані можуть оновлюватися із затримкою.
+      </p>
     </div>
   </section>
 
-  <!-- =====================================================================
-       2. ОСНОВНИЙ ДОДАТОК (КОНТРАСТНИЙ БІЛИЙ ВЕРХ + ЧОРНИЙ НИЗ)
-       ===================================================================== -->
-  <div id="mainApp" class="hidden">
-
-    <!-- ВЕРХНЯ БІЛА ЗОНА -->
-    <div class="white-zone">
-      <header class="sticky-header">
-        <div class="container">
-          <div class="topbar">
-            <div class="brand-group" onclick="window.showEntryScreen()">
-              <div class="brand-icon">
-                <span class="ios-sticker-dark">⚡</span>
-              </div>
-              <div>
-                <div class="brand-name">ZP SVITLO</div>
-                <div class="brand-sub">ЗАПОРІЖЖЯ • LIVE</div>
-              </div>
-            </div>
-
-            <div class="nav-actions">
-              <div class="hud-pill">
-                <span class="live-dot"></span>
-                <span id="liveClock">--:--:--</span>
-              </div>
-
-              <button type="button" onclick="window.openModal('parserModal')" class="btn-light">
-                <span class="ios-sticker" style="font-size: 13px;">📋</span>
-                <span>Зведення ZOE</span>
-              </button>
-
-              <button type="button" onclick="window.openModal('broadcastModal')" class="btn-dark-pill">
-                <span>ЕФІР 📢</span>
-              </button>
-
-              <a href="https://t.me/s/Zaporizhzhyaoblenergo_news" target="_blank" rel="noopener noreferrer" class="btn-light">
-                <span>TG ZOE ↗</span>
-              </a>
-            </div>
-          </div>
-        </div>
-      </header>
-
+  <!-- 2. ОСНОВНИЙ РОБОЧИЙ ПРОСТІР -->
+  <div id="mainAppWrapper">
+    <header class="top-white-zone">
       <div class="container">
-        <!-- Аварійний банер ГАВ у верхній зоні -->
-        <div id="emergencyBanner" class="gav-banner-top hidden animate-pop">
-          <div style="display: flex; align-items: center; gap: 12px; max-width: 760px;">
-            <span class="ios-sticker-dark" style="font-size: 30px;">🚨</span>
-            <div>
-              <div class="font-mono" style="font-size: 9.5px; font-weight: 800; color: #a1a1aa; letter-spacing: 0.06em;">
-                ЕКСТРЕНЕ ПОВІДОМЛЕННЯ • <span id="gavTimeBadge">LIVE</span>
-              </div>
-              <div id="gavTitle" class="font-display" style="font-size: 14px; font-weight: 800; margin-top: 2px;">
-                У Запоріжжі діють графіки аварійних відключень (ГАВ / СГАВ)
-              </div>
-              <div id="gavDesc" style="font-size: 11.5px; color: #d4d4d8; margin-top: 2px; line-height: 1.4;">
-                За командою НЕК «Укренерго» застосовані екстрені аварійні відключення. Погодинні графіки (ГПВ) тимчасово не діють.
-              </div>
-            </div>
+        <div class="top-navbar">
+          <div class="brand-lockup">
+            <span class="ios-sticker" style="font-size: 20px;">⚡</span>
+            <span class="brand-title">ZP SVITLO</span>
           </div>
-          <a href="https://t.me/s/Zaporizhzhyaoblenergo_news" target="_blank" rel="noopener noreferrer" class="btn-light">
-            <span>Канал ZOE ↗</span>
-          </a>
+
+          <div class="nav-actions">
+            <div class="hud-pill">
+              <span class="pulse-dot"></span>
+              <span id="liveClock">--:--:--</span>
+            </div>
+
+            <button type="button" id="headerRefreshBtn" class="btn-light">
+              <span id="headerRefreshIcon">🔄</span>
+              <span>Оновити</span>
+            </button>
+
+            <button type="button" id="openBroadcastBtn" class="btn-dark-pill">
+              <span>ЕФІР 📢</span>
+            </button>
+          </div>
         </div>
 
+        <!-- Плашка аварійних відключень ГАВ / СГАВ -->
+        <div id="emergencyBanner" class="gav-alert-banner hidden">
+          <div class="gav-alert-top">
+            <span class="gav-badge">🚨 УВАГА • ДІЮТЬ ГАВ / СГАВ</span>
+            <span id="gavTimeBadge" class="font-mono" style="font-size: 10px; color: #a1a1aa;">LIVE</span>
+          </div>
+          <div id="gavTitle" style="font-weight: 800; font-size: 13.5px; margin-top: 2px;">
+            У Запоріжжі застосовано графіки аварійних відключень
+          </div>
+          <div id="gavDesc" style="font-size: 12px; color: #d4d4d8; line-height: 1.4;">
+            Погодинні графіки (ГПВ) тимчасово не діють до стабілізації енергосистеми.
+          </div>
+        </div>
+
+        <!-- Вибір черги 1.1 - 6.2 -->
         <div class="section-head-light">
           <div>
-            <div class="step-label">01 // ПІДЧЕРГИ М. ЗАПОРІЖЖЯ</div>
-            <h2 class="section-title-light">Оберіть чергу та підчергу</h2>
-          </div>
-
-          <div class="sync-box" onclick="window.syncWithSources(true)" style="cursor: pointer;">
-            <span class="ios-sticker" style="font-size: 14px;">📡</span>
-            <div>
-              <div style="font-weight: 800; color: #09090b;">АВТОСИНХРОНІЗАЦІЯ TG + CLOUD</div>
-              <div id="syncStatusText" style="color: #52525b; font-size: 9.5px;">Підключення...</div>
-            </div>
+            <div class="step-label">01 // м. Запоріжжя</div>
+            <h2 class="section-title-light">Оберіть чергу (1.1 – 6.2)</h2>
           </div>
         </div>
 
-        <!-- Сітка 12 підчерг (4x3 на телефоні, 6x2 на ПК) -->
         <div id="queueSelectorGrid" class="queues-grid"></div>
 
-        <!-- Інформаційна панель обраної підчерги -->
-        <div class="selected-info-bar">
-          <div class="selected-info-left">
-            <div id="selectedQueueCodeBadge" class="selected-code-box">1.1</div>
-            <div>
-              <div id="selectedQueueOfficialTitle" style="font-weight: 800; font-size: 13.5px; color: #09090b;">
-                м. Запоріжжя, Черга 1, підчерга 1
-              </div>
-              <div id="selectedQueueOfficialNote" style="font-size: 11.5px; color: #52525b; margin-top: 2px; line-height: 1.4;">
-                Графік погодинних відключень із точністю до 30 хв. Автооновлення з @Zaporizhzhyaoblenergo_news.
-              </div>
-            </div>
+        <div class="selected-queue-meta">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span id="selectedQueueCodeBadge" style="background: #09090b; color: #ffffff; font-family: var(--font-display); font-size: 13px; font-weight: 800; padding: 6px 10px; border-radius: 10px;">5.2</span>
+            <div id="selectedQueueOfficialTitle" style="font-weight: 800; font-size: 13px;">м. Запоріжжя, Черга 5, підчерга 2</div>
           </div>
-
-          <a href="https://www.zoe.com.ua/outage/" target="_blank" rel="noopener noreferrer" class="btn-dark-pill">
-            <span class="ios-sticker-dark" style="font-size: 14px;">📍</span>
-            <span>Перевірити адресу на ZOE ↗</span>
-          </a>
+          <div class="font-mono" style="font-size: 10px; color: #52525b;">
+            Крок графіка: 30 хв
+          </div>
         </div>
       </div>
-    </div>
+    </header>
 
-    <!-- НИЖНЯ ЧОРНА ТАКТИЧНА МІЛІТАРІ-ЗОНА -->
-    <main class="black-zone">
+    <main class="bottom-dark-zone">
       <div class="container">
-
-        <!-- Блок 02: Жива телеметрія -->
-        <div class="telemetry-grid">
-
+        <!-- Блок 02: Живий статус та таймер -->
+        <div class="hero-grid">
           <div class="tactical-card">
-            <div id="radarScanLine" class="radar-line"></div>
-
-            <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
-              <span class="font-mono" style="font-size: 10px; color: #a1a1aa; letter-spacing: 0.07em;">
-                02 // ТЕЛЕМЕТРІЯ В РЕАЛЬНОМУ ЧАСІ
-              </span>
-              <span id="heroQueueBadge" class="font-mono" style="font-size: 10px; font-weight: 800; background: #ffffff; color: #09090b; padding: 3px 9px; border-radius: 7px;">
-                ЧЕРГА 1 • ПІДЧ. 1
-              </span>
+            <div class="hero-top-row">
+              <span class="step-label" style="color: #a1a1aa;">02 // СТАТУС У РЕАЛЬНОМУ ЧАСІ</span>
+              <span id="heroQueueBadge" class="white-chip">ЧЕРГА 5 • ПІДЧ. 2</span>
             </div>
 
-            <div class="hero-status-row">
+            <div class="hero-main-status">
+              <span id="heroSticker" class="ios-sticker-dark" style="font-size: 46px;">⚡</span>
               <div>
-                <h2 id="heroStatusTitle" class="hero-status-title">Світло є</h2>
-                <div id="heroStatusSubtitle" class="hero-status-sub">
-                  ФАЗА АКТИВНА • НАПРУГА В МЕРЕЖІ СТАБІЛЬНА
-                </div>
+                <div id="heroStatusTitle" class="hero-status-title">СВІТЛО Є</div>
+                <div id="heroStatusSubtitle" class="hero-status-sub">ЗА ПОГОДИННИМ ГРАФІКОМ (ГПВ)</div>
               </div>
-              <span id="heroSticker" class="ios-sticker-dark" style="font-size: 46px;">💡</span>
             </div>
 
-            <div class="countdown-panel">
-              <div class="countdown-top">
-                <span id="countdownLabel" class="font-mono" style="font-size: 10px; color: #a1a1aa; font-weight: 700;">
-                  ДО ПЛАНОВОГО ВІДКЛЮЧЕННЯ:
-                </span>
-                <span id="nextEventTime" class="font-mono" style="font-size: 11px; font-weight: 800; color: #ffffff;">
-                  о --:--
-                </span>
+            <div class="countdown-box">
+              <div>
+                <div id="countdownLabel" class="font-mono" style="font-size: 10px; color: #a1a1aa;">ДО ВІДКЛЮЧЕННЯ:</div>
+                <div id="countdownTimer" class="countdown-value">00:00:00</div>
               </div>
-
-              <div id="countdownTimer" class="countdown-digits">00:00:00</div>
-
-              <div class="progress-track">
-                <div id="intervalProgressBar" class="progress-fill" style="width: 35%;"></div>
+              <div style="text-align: right;">
+                <div class="font-mono" style="font-size: 9.5px; color: #71717a;">НАСТУПНА ЗМІНА</div>
+                <div id="nextEventTime" class="font-mono" style="font-size: 14px; font-weight: 800; color: #ffffff;">--:--</div>
               </div>
+            </div>
 
-              <div class="progress-labels">
-                <span id="intervalStartLabel">ПОЧАТОК: --:--</span>
-                <span id="intervalPercentLabel">35%</span>
-                <span id="intervalEndLabel">КІНЕЦЬ: --:--</span>
-              </div>
+            <div class="progress-track">
+              <div id="intervalProgressBar" class="progress-fill" style="width: 50%;"></div>
+            </div>
+            <div class="font-mono" style="display: flex; justify-content: space-between; font-size: 9.5px; color: #71717a; margin-top: 6px;">
+              <span id="intervalStartLabel">ПОЧАТОК: --:--</span>
+              <span id="intervalPercentLabel">50%</span>
+              <span id="intervalEndLabel">КІНЕЦЬ: --:--</span>
             </div>
           </div>
 
-          <div class="tactical-card" style="display: flex; flex-direction: column; justify-content: space-between;">
+          <div class="tactical-card" style="display: flex; flex-direction: column; justify-content: space-between; gap: 12px;">
             <div>
-              <div class="font-mono" style="font-size: 10px; color: #a1a1aa; letter-spacing: 0.07em;">
-                ДОБОВИЙ БАЛАНС ТА ІНТЕРВАЛИ
-              </div>
-
-              <div class="stats-pair">
-                <div class="stat-mini">
-                  <div style="display: flex; align-items: center; justify-content: space-between;">
-                    <span class="font-mono" style="font-size: 9.5px; color: #a1a1aa;">ЗІ СВІТЛОМ</span>
-                    <span class="ios-sticker-dark" style="font-size: 15px;">🔋</span>
-                  </div>
-                  <div id="statHoursOn" class="stat-mini-val">13.5 год</div>
+              <div class="step-label" style="color: #a1a1aa; margin-bottom: 10px;">ДОБОВА ТЕЛЕМЕТРІЯ ЧЕРГИ</div>
+              <div class="stats-mini-grid">
+                <div class="stat-box">
+                  <div class="font-mono" style="font-size: 9.5px; color: #a1a1aa;">СВІТЛО ЗА ДОБУ</div>
+                  <div id="statHoursOn" class="font-display" style="font-size: 17px; font-weight: 800; margin-top: 4px;">17.5 год</div>
                 </div>
-
-                <div class="stat-mini">
-                  <div style="display: flex; align-items: center; justify-content: space-between;">
-                    <span class="font-mono" style="font-size: 9.5px; color: #a1a1aa;">БЕЗ СВІТЛА</span>
-                    <span class="ios-sticker-dark" style="font-size: 15px;">🕯️</span>
-                  </div>
-                  <div id="statHoursOff" class="stat-mini-val">10.5 год</div>
+                <div class="stat-box">
+                  <div class="font-mono" style="font-size: 9.5px; color: #a1a1aa;">ОБМЕЖЕННЯ (ГПВ)</div>
+                  <div id="statHoursOff" class="font-display" style="font-size: 17px; font-weight: 800; margin-top: 4px;">6.5 год</div>
                 </div>
               </div>
             </div>
 
-            <div class="source-feed-box">
-              <div style="display: flex; align-items: center; justify-content: space-between; gap: 6px; margin-bottom: 5px;">
-                <span class="font-mono" style="font-size: 9.5px; font-weight: 800; color: #ffffff;">
-                  ОСТАННЄ ЗВЕДЕННЯ ZOE NEWS
-                </span>
-                <button type="button" onclick="window.syncWithSources(true)" style="background: none; border: none; color: #a1a1aa; font-family: var(--font-mono); font-size: 9.5px; text-decoration: underline; cursor: pointer; min-height: 26px;">
-                  Оновити зараз
-                </button>
+            <div style="background: #141419; border: 1px solid #27272f; border-radius: 14px; padding: 12px;">
+              <div class="font-mono" style="font-size: 9.5px; color: #a1a1aa; margin-bottom: 4px;">ІНТЕРВАЛИ ВІДКЛЮЧЕНЬ НА ДОБУ</div>
+              <div id="telemetryIntervalsPreview" class="font-mono" style="font-size: 12.5px; font-weight: 800; color: #ffffff; line-height: 1.45;">
+                04:00 – 09:00 • 22:30 – 24:00
               </div>
-              <p id="latestOfficialSnippet" style="font-size: 11.5px; color: #d4d4d8; line-height: 1.4;">
-                Графік погодинних відключень по всіх 12 підчергах м. Запоріжжя з точністю до 30 хв. Автоматична синхронізація з @Zaporizhzhyaoblenergo_news.
-              </p>
             </div>
           </div>
-
         </div>
 
-        <!-- Блок 03: Тактична мілітарі-матриця 24 години (48 слотів по 30 хв) -->
-        <section class="matrix-section">
+        <!-- Блок 03: Тактична сітка ГПВ -->
+        <section class="matrix-wrapper">
           <div class="matrix-header">
             <div>
-              <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px;">
-                <span class="font-mono" style="font-size: 10px; color: #a1a1aa; letter-spacing: 0.07em;">
-                  03 // ТАКТИЧНА СІТКА ГПВ
-                </span>
-                <span class="font-mono" style="font-size: 9.5px; padding: 2px 7px; border-radius: 5px; border: 1px solid rgba(255,255,255,0.2); color: #ffffff;">
-                  КРОК 30 ХВ
-                </span>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="step-label" style="color: #a1a1aa;">03 // ТАКТИЧНА СІТКА ГПВ</span>
+                <span style="background: #1e1e26; border: 1px solid #32323e; border-radius: 6px; padding: 2px 6px; font-family: var(--font-mono); font-size: 9px; color: #d4d4d8;">КРОК 30 ХВ</span>
               </div>
-              <h3 id="matrixSectionTitle" class="font-display" style="font-size: 15px; font-weight: 800; color: #ffffff; margin-top: 4px;">
+              <h2 id="matrixSectionTitle" class="font-display" style="font-size: 15px; font-weight: 800; margin-top: 4px;">
                 Розклад обмежень (00:00 — 24:00)
-              </h3>
+              </h2>
             </div>
 
-            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px;">
-              <div class="view-switcher" role="tablist">
-                <button type="button" id="tabDetailView" onclick="window.setMatrixView('detail')" class="view-tab-btn active">
-                  Обрана черга
-                </button>
-                <button type="button" id="tabAllView" onclick="window.setMatrixView('all')" class="view-tab-btn">
-                  Усі 12 підчерг
-                </button>
-              </div>
+            <div class="view-switcher">
+              <button type="button" id="btnViewDetail" class="view-switch-btn active">
+                Обрана черга
+              </button>
+              <button type="button" id="btnViewAll" class="view-switch-btn">
+                Усі 12 підчерг
+              </button>
             </div>
           </div>
 
-          <div class="legend-row">
+          <div class="legend-bar">
             <div class="legend-items">
-              <div class="legend-item">
-                <span class="legend-swatch hatch-on"></span>
-                <span>Світло є</span>
-              </div>
-              <div class="legend-item">
-                <span class="legend-swatch hatch-off"></span>
-                <span>Відключення (ГПВ)</span>
-              </div>
-              <div class="legend-item">
-                <span class="legend-swatch hatch-jur"></span>
-                <span>2.1 — Юридичні споживачі (населення не задіяне)</span>
-              </div>
+              <span class="legend-item"><span class="legend-swatch-on"></span> Світло є</span>
+              <span class="legend-item"><span class="legend-swatch-off"></span> Відключення (ГПВ)</span>
+              <span class="legend-item"><span style="width: 12px; height: 12px; border-radius: 3px; background: #f59e0b; display: inline-block;"></span> 2.1 — Юридичні споживачі</span>
             </div>
-            <div id="matrixHintText">КРОК: :00 / :30</div>
+            <span>КРОК: :00 / :30</span>
           </div>
 
-          <!-- Варіант 1 (ОСНОВНИЙ): Детальна погодинна сітка обраної черги -->
+          <!-- Варіант 1 (ОСНОВНИЙ): Сітка 8x3 на 24 години -->
           <div id="detailMatrixContainer" class="detail-hours-grid"></div>
 
-          <!-- Варіант 2: Зведена таблиця всіх 12 підчерг -->
-          <div id="allQueuesMatrixContainer" class="matrix-scroll hidden">
-            <table class="matrix-table">
+          <!-- Варіант 2: Зведена таблиця усіх 12 підчерг -->
+          <div id="allQueuesMatrixContainer" class="all-matrix-scroll hidden">
+            <table class="all-matrix-table">
               <thead>
-                <tr id="matrixHeaderRow" style="background: #18181d; color: #a1a1aa;">
-                  <th class="matrix-sticky-col" style="background: #18181d; color: #ffffff; width: 112px;">
-                    ПІДЧЕРГА
-                  </th>
-                </tr>
+                <tr id="matrixHoursHeaderRow"></tr>
               </thead>
               <tbody id="matrixTableBody"></tbody>
             </table>
           </div>
 
-          <div class="intervals-summary-box">
+          <div class="intervals-footer-bar">
             <div style="display: flex; align-items: center; gap: 10px;">
               <span class="ios-sticker-dark" style="font-size: 24px;">🕯️</span>
               <div>
-                <div class="font-mono" style="font-size: 10px; color: #a1a1aa;">
-                  Інтервали для <strong id="summaryQueueName" style="color: #ffffff;">м. Запоріжжя, Черга 1, підчерга 1</strong>:
+                <div style="font-size: 11px; color: #a1a1aa;">
+                  Інтервали для <strong id="summaryQueueName" style="color: #ffffff;">м. Запоріжжя, Черга 5, підчерга 2</strong>:
                 </div>
-                <div id="detailedIntervalsText" class="font-mono" style="font-size: 12px; font-weight: 700; color: #ffffff; margin-top: 3px;">
-                  00:00 – 04:30 • 10:00 – 15:00 • 19:00 – 24:00
+                <div id="detailedIntervalsText" class="font-mono" style="font-size: 13px; font-weight: 800; color: #ffffff; margin-top: 2px;">
+                  04:00 - 09:00  •  22:30 - 24:00
                 </div>
               </div>
             </div>
-            <button type="button" onclick="window.copyScheduleToClipboard()" class="btn-outline-white">
+
+            <button type="button" id="copyScheduleBtn" class="copy-schedule-btn">
               Скопіювати графік
             </button>
           </div>
         </section>
 
-        <!-- Футер із точним дисклеймером -->
         <footer class="site-footer">
-          <p style="max-width: 840px; line-height: 1.5;">
-            <strong style="color: #ffffff;">ZP SVITLO — неофіційний сайт.</strong> Інформація береться з офіційних ресурсів Запоріжжяобленерго і може бути неточною. Перевіряйте офіційні канали.
+          <p>
+            <strong style="color: #ffffff;">Неофіційний моніторинг</strong> • м. Запоріжжя. Інформація може змінюватися оперативно.
           </p>
-          <div class="font-mono" style="font-size: 10px;">
-            ZP SVITLO • LIVE
-          </div>
+          <span class="font-mono">ZP SVITLO • LIVE</span>
         </footer>
-
       </div>
     </main>
   </div>
 
-  <!-- =====================================================================
-       3. МОДАЛЬНЕ ВІКНО: ЕФІР СПОВІЩЕНЬ (БЕЗ ПІДКАЗОК ПАРОЛЯ)
-       ===================================================================== -->
-  <div id="broadcastModal" class="modal-backdrop hidden" onclick="if(event.target===this) window.closeModal('broadcastModal')">
-    <div class="modal-card animate-pop">
+  <!-- 3. МОДАЛЬНЕ ВІКНО: ЕФІР (ГРАФІК + ТГ-КАНАЛ + СПОВІЩЕННЯ) -->
+  <div id="broadcastModal" class="modal-backdrop hidden">
+    <div class="modal-card">
       <div class="modal-header">
         <div style="display: flex; align-items: center; gap: 10px;">
           <span class="ios-sticker" style="font-size: 22px;">📢</span>
           <div>
-            <h3 class="font-display" style="font-size: 14px; font-weight: 800;">Прямий ефір</h3>
-            <div class="font-mono" style="font-size: 9.5px; color: #52525b;">ОПОВІЩЕННЯ ДЛЯ ВСІХ КОРИСТУВАЧІВ</div>
+            <h3 class="font-display" style="font-size: 14px; font-weight: 800;">Керування та Ефір</h3>
+            <div class="font-mono" style="font-size: 9.5px; color: #52525b;">ХМАРНА СИНХРОНІЗАЦІЯ ДЛЯ ВСІХ КОРИСТУВАЧІВ</div>
           </div>
         </div>
-        <button type="button" class="modal-close" onclick="window.closeModal('broadcastModal')">✕</button>
+        <button type="button" id="closeBroadcastModalBtn" class="modal-close">✕</button>
       </div>
 
-      <div style="display: flex; flex-direction: column; gap: 10px;">
+      <div class="modal-tabs">
+        <button type="button" id="tabScheduleBtn" class="modal-tab-btn active">
+          Графік
+        </button>
+        <button type="button" id="tabTgBtn" class="modal-tab-btn">
+          Telegram-канал
+        </button>
+        <button type="button" id="tabAlertBtn" class="modal-tab-btn">
+          Сповіщення
+        </button>
+      </div>
+
+      <div style="margin-bottom: 10px;">
+        <label class="font-mono" style="font-size: 10px; font-weight: 700; display: block; margin-bottom: 4px;">КОД ДОСТУПУ:</label>
+        <input type="password" id="broadcastPinInput" class="field-input" autocomplete="off" />
+      </div>
+
+      <!-- Вкладка 1: Оновлення графіка -->
+      <div id="paneSchedule" style="display: flex; flex-direction: column; gap: 10px;">
         <div>
-          <label class="font-mono" style="font-size: 10px; font-weight: 700; display: block; margin-bottom: 4px;">КОД ДОСТУПУ:</label>
-          <input type="password" id="broadcastPinInput" class="field-input" autocomplete="off" />
+          <label class="font-mono" style="font-size: 10px; font-weight: 700; display: block; margin-bottom: 4px;">
+            НОВИЙ ГРАФІК (ФОРМАТ 1.1: 00:00 – 04:30...):
+          </label>
+          <textarea id="manualZoeTextInput" rows="6" class="field-textarea font-mono" placeholder="1.1: 00:00 – 04:30, 19:00 – 24:00&#10;1.2: 00:00 – 04:30, 22:00 – 24:00&#10;5.2: 04:00 – 09:00, 22:30 – 24:00"></textarea>
         </div>
 
+        <div id="manualPreviewBox" class="hidden" style="background: #f4f4f6; border: 1px solid #e4e4e7; border-radius: 10px; padding: 8px 10px; font-family: var(--font-mono); font-size: 10px;"></div>
+
+        <button type="button" id="publishScheduleBtn" class="btn-dark-pill" style="width: 100%; min-height: 46px;">
+          <span>Опублікувати графік для всіх</span>
+        </button>
+      </div>
+
+      <!-- Вкладка 2: Зміна Telegram-каналу -->
+      <div id="paneTg" class="hidden" style="display: flex; flex-direction: column; gap: 10px;">
+        <div>
+          <label class="font-mono" style="font-size: 10px; font-weight: 700; display: block; margin-bottom: 4px;">
+            ПОСИЛАННЯ НА TELEGRAM-КАНАЛ (https://t.me/...):
+          </label>
+          <input type="url" id="tgChannelUrlInput" class="field-input font-mono" placeholder="https://t.me/s/Zaporizhzhyaoblenergo_news" />
+        </div>
+
+        <button type="button" id="saveTgChannelBtn" class="btn-dark-pill" style="width: 100%; min-height: 46px;">
+          <span>Зберегти Telegram-канал</span>
+        </button>
+      </div>
+
+      <!-- Вкладка 3: Сповіщення всім користувачам -->
+      <div id="paneAlert" class="hidden" style="display: flex; flex-direction: column; gap: 10px;">
         <div>
           <label class="font-mono" style="font-size: 10px; font-weight: 700; display: block; margin-bottom: 4px;">ТИП СПОВІЩЕННЯ:</label>
           <select id="broadcastTypeInput" class="field-input">
@@ -1722,1131 +1446,1495 @@
         </div>
 
         <div>
-          <label class="font-mono" style="font-size: 10px; font-weight: 700; display: block; margin-bottom: 4px;">ПОВІДОМЛЕННЯ:</label>
-          <textarea id="broadcastBodyInput" rows="4" class="field-textarea" placeholder="Введіть текст сповіщення..."></textarea>
+          <label class="font-mono" style="font-size: 10px; font-weight: 700; display: block; margin-bottom: 4px;">ТЕКСТ ПОВІДОМЛЕННЯ:</label>
+          <textarea id="broadcastBodyInput" rows="3" class="field-textarea" placeholder="Введіть повідомлення для всіх користувачів..."></textarea>
         </div>
 
-        <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 4px;">
-          <button type="button" onclick="window.sendLiveBroadcast()" class="btn-dark-pill" style="width: 100%; min-height: 46px;">
-            <span>Опублікувати для всіх</span>
-          </button>
-          <button type="button" onclick="window.clearActiveBroadcast()" class="btn-light" style="width: 100%;">
-            <span>Зняти активне сповіщення</span>
-          </button>
-        </div>
+        <button type="button" id="sendBroadcastBtn" class="btn-dark-pill" style="width: 100%; min-height: 46px;">
+          <span>Розіслати в ефір</span>
+        </button>
+
+        <button type="button" id="clearBroadcastBtn" class="btn-light" style="width: 100%; min-height: 40px;">
+          <span>Зняти активний ефір</span>
+        </button>
       </div>
+
+      <div id="firebaseFeedbackBox" class="feedback-banner hidden"></div>
     </div>
   </div>
 
-  <!-- =====================================================================
-       4. МОДАЛЬНЕ ВІКНО: ЗВЕДЕННЯ ZOE (РУЧНИЙ ПЕРЕГЛЯД / ВСТАВКА ТЕКСТУ)
-       ===================================================================== -->
-  <div id="parserModal" class="modal-backdrop hidden" onclick="if(event.target===this) window.closeModal('parserModal')">
-    <div class="modal-card animate-pop">
-      <div class="modal-header">
-        <div style="display: flex; align-items: center; gap: 10px;">
-          <span class="ios-sticker" style="font-size: 22px;">📋</span>
-          <div>
-            <h3 class="font-display" style="font-size: 14px; font-weight: 800;">Зведення ZOE</h3>
-            <div class="font-mono" style="font-size: 9.5px; color: #52525b;">РОЗПІЗНАЄ ІНТЕРВАЛИ :00 / :30 ТА ГАВ</div>
-          </div>
-        </div>
-        <button type="button" class="modal-close" onclick="window.closeModal('parserModal')">✕</button>
-      </div>
-
-      <p style="font-size: 12px; color: #52525b; margin-bottom: 10px; line-height: 1.4;">
-        Вставте повідомлення з Telegram-каналу <strong>@Zaporizhzhyaoblenergo_news</strong>, щоб миттєво оновити графік і синхронізувати його для всіх:
-      </p>
-
-      <textarea id="manualZoeTextInput" rows="5" class="field-textarea font-mono" placeholder="1.1: 00:00 – 04:30, 10:00 – 15:00, 19:00 – 24:00&#10;1.2: 00:00 – 04:30, 13:00 – 18:00, 22:00 – 24:00..."></textarea>
-
-      <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px;">
-        <button type="button" onclick="window.closeModal('parserModal')" class="btn-light">Закрити</button>
-        <button type="button" onclick="window.parseManualInput()" class="btn-dark-pill">Застосувати графік</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- =====================================================================
-       5. СПЛИВАЮЧЕ ВІКНО ПРЯМОГО ЕФІРУ ДЛЯ ВСІХ КОРИСТУВАЧІВ
-       ===================================================================== -->
+  <!-- 4. СПЛИВАЮЧЕ ВІКНО ЖИВОГО ЕФІРУ ДЛЯ ВСІХ КОРИСТУВАЧІВ -->
   <div id="liveBroadcastPopup" class="modal-backdrop hidden">
-    <div id="liveBroadcastCard" class="modal-card animate-pop" style="border: 3px solid #09090b; text-align: center;">
-      <div style="margin-bottom: 10px;">
-        <span id="popupSticker" class="ios-sticker" style="font-size: 46px;">📢</span>
+    <div id="liveBroadcastCard" class="live-alert-card">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+        <span id="popupTypeBadge" class="white-chip">📢 ПРЯМИЙ ЕФІР • ZP SVITLO</span>
+        <span id="popupTimeLabel" class="font-mono" style="font-size: 10px; color: #a1a1aa;">LIVE</span>
       </div>
-      <div id="popupBadge" class="hud-pill" style="margin-bottom: 10px;">ZP SVITLO // ОПОВІЩЕННЯ</div>
-      <h3 id="popupTitle" class="font-display" style="font-size: 16px; font-weight: 800; margin-bottom: 8px;">
-        Оперативне повідомлення
-      </h3>
-      <p id="popupBody" style="font-size: 13.5px; color: #27272a; line-height: 1.5; margin-bottom: 12px; white-space: pre-line;">
-        Текст повідомлення
-      </p>
-      <div id="popupTime" class="font-mono" style="font-size: 10px; color: #71717a; margin-bottom: 16px;">
-        Щойно
+
+      <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px;">
+        <span id="popupSticker" class="ios-sticker-dark" style="font-size: 38px;">📢</span>
+        <div>
+          <h3 id="popupTitle" class="font-display" style="font-size: 16px; font-weight: 800; line-height: 1.25;">
+            Повідомлення моніторингу
+          </h3>
+          <p id="popupBody" style="font-size: 13.5px; color: #e4e4e7; line-height: 1.45; margin-top: 6px; white-space: pre-line;"></p>
+        </div>
       </div>
-      <button type="button" onclick="window.dismissBroadcastPopup()" class="btn-dark-pill" style="width: 100%; min-height: 48px;">
-        Зрозуміло
+
+      <button type="button" id="dismissPopupBtn" class="splash-cta-btn" style="min-height: 46px;">
+        <span>Зрозуміло</span>
       </button>
     </div>
   </div>
 
-  <!-- Toast сповіщення -->
-  <div id="toastBox" class="toast-box hidden">
-    <span id="toastSticker" class="ios-sticker" style="font-size: 16px;">⚡</span>
-    <span id="toastText">Оновлено</span>
+  <!-- Тост-сповіщення -->
+  <div id="toastNotification" class="toast-pill hidden">
+    <span id="toastIcon">⚡</span>
+    <span id="toastMessage">Оновлено</span>
   </div>
 
   <script>
-    // =========================================================================
-    // 1. КОНФІГУРАЦІЯ FIREBASE REALTIME DATABASE ТА ОФІЦІЙНИХ ПІДЧЕРГ
-    // =========================================================================
-    const FIREBASE_DB_URL = 'https://zpsvitlo-default-rtdb.europe-west1.firebasedatabase.app';
-    const ACCESS_HASH_TARGET = '26262618';
+    (() => {
+      'use strict';
 
-    const OFFICIAL_SUBQUEUES = [
-      { id: '1.1', short: 'Черга 1 • підч. 1', label: 'м. Запоріжжя, Черга 1, підчерга 1', isJuridicalOnly: false },
-      { id: '1.2', short: 'Черга 1 • підч. 2', label: 'м. Запоріжжя, Черга 1, підчерга 2', isJuridicalOnly: false },
-      { id: '2.1', short: 'Черга 2 • підч. 1', label: 'Черга 2, підчерга 1 — юридичні споживачі, населення не задіяне', isJuridicalOnly: true },
-      { id: '2.2', short: 'Черга 2 • підч. 2', label: 'м. Запоріжжя, Черга 2, підчерга 2', isJuridicalOnly: false },
-      { id: '3.1', short: 'Черга 3 • підч. 1', label: 'м. Запоріжжя, Черга 3, підчерга 1', isJuridicalOnly: false },
-      { id: '3.2', short: 'Черга 3 • підч. 2', label: 'м. Запоріжжя, Черга 3, підчерга 2', isJuridicalOnly: false },
-      { id: '4.1', short: 'Черга 4 • підч. 1', label: 'м. Запоріжжя, Черга 4, підчерга 1', isJuridicalOnly: false },
-      { id: '4.2', short: 'Черга 4 • підч. 2', label: 'м. Запоріжжя, Черга 4, підчерга 2', isJuridicalOnly: false },
-      { id: '5.1', short: 'Черга 5 • підч. 1', label: 'м. Запоріжжя, Черга 5, підчерга 1', isJuridicalOnly: false },
-      { id: '5.2', short: 'Черга 5 • підч. 2', label: 'м. Запоріжжя, Черга 5, підчерга 2', isJuridicalOnly: false },
-      { id: '6.1', short: 'Черга 6 • підч. 1', label: 'м. Запоріжжя, Черга 6, підчерга 1', isJuridicalOnly: false },
-      { id: '6.2', short: 'Черга 6 • підч. 2', label: 'м. Запоріжжя, Черга 6, підчерга 2', isJuridicalOnly: false }
-    ];
+      // =========================================================================
+      // 1. ЗАХИЩЕНА КОНФІГУРАЦІЯ ТА КРИПТОГРАФІЧНИЙ ЗАХИСТ ДОСТУПУ
+      // =========================================================================
+      const FIREBASE_DB_URL = 'https://zpsvitlo-default-rtdb.europe-west1.firebasedatabase.app';
+      const EXPECTED_AUTH_HASH = '0c874986d60e8c3f1e5d3a3a8a8e31d657728c45650c740f734a13d3f8680c1f';
+      const DEFAULT_TG_URL = 'https://t.me/s/Zaporizhzhyaoblenergo_news';
 
-    const ALL_QUEUES = OFFICIAL_SUBQUEUES.map(q => q.id);
+      const SUBQUEUES = Object.freeze([
+        { id: '1.1', short: 'Черга 1 • підч. 1', label: 'м. Запоріжжя, Черга 1, підчерга 1', isJuridicalOnly: false },
+        { id: '1.2', short: 'Черга 1 • підч. 2', label: 'м. Запоріжжя, Черга 1, підчерга 2', isJuridicalOnly: false },
+        { id: '2.1', short: 'Черга 2 • підч. 1', label: 'Черга 2, підчерга 1 — Юридичні споживачі', isJuridicalOnly: true },
+        { id: '2.2', short: 'Черга 2 • підч. 2', label: 'м. Запоріжжя, Черга 2, підчерга 2', isJuridicalOnly: false },
+        { id: '3.1', short: 'Черга 3 • підч. 1', label: 'м. Запоріжжя, Черга 3, підчерга 1', isJuridicalOnly: false },
+        { id: '3.2', short: 'Черга 3 • підч. 2', label: 'м. Запоріжжя, Черга 3, підчерга 2', isJuridicalOnly: false },
+        { id: '4.1', short: 'Черга 4 • підч. 1', label: 'м. Запоріжжя, Черга 4, підчерга 1', isJuridicalOnly: false },
+        { id: '4.2', short: 'Черга 4 • підч. 2', label: 'м. Запоріжжя, Черга 4, підчерга 2', isJuridicalOnly: false },
+        { id: '5.1', short: 'Черга 5 • підч. 1', label: 'м. Запоріжжя, Черга 5, підчерга 1', isJuridicalOnly: false },
+        { id: '5.2', short: 'Черга 5 • підч. 2', label: 'м. Запоріжжя, Черга 5, підчерга 2', isJuridicalOnly: false },
+        { id: '6.1', short: 'Черга 6 • підч. 1', label: 'м. Запоріжжя, Черга 6, підчерга 1', isJuridicalOnly: false },
+        { id: '6.2', short: 'Черга 6 • підч. 2', label: 'м. Запоріжжя, Черга 6, підчерга 2', isJuridicalOnly: false }
+      ]);
 
-    // Базовий розклад із точністю до 30 хвилин (48 слотів на добу)
-    const ACTUAL_DEFAULT_INTERVALS = {
-      '1.1': ['00:00-04:30', '10:00-15:00', '19:00-24:00'],
-      '1.2': ['00:00-04:30', '13:00-18:00', '22:00-24:00'],
-      '2.1': ['08:30-13:30', '17:30-22:30'],
-      '2.2': ['00:00-00:30', '08:30-13:30', '17:30-22:30'],
-      '3.1': ['04:00-09:00', '18:00-23:00'],
-      '3.2': ['04:00-09:00', '13:30-18:30'],
-      '4.1': ['08:30-13:30', '17:30-22:30'],
-      '4.2': ['00:00-00:30', '05:30-10:30', '14:30-19:30', '23:30-24:00'],
-      '5.1': ['00:00-04:30', '08:30-13:30', '17:30-22:30'],
-      '5.2': ['04:00-09:00', '13:00-18:00', '22:30-24:00'],
-      '6.1': ['00:00-04:30', '13:00-18:00', '22:00-24:00'],
-      '6.2': ['04:00-09:00', '13:00-18:00', '22:00-24:00']
-    };
+      const ALL_QUEUES = Object.freeze(SUBQUEUES.map(q => q.id));
 
-    let selectedQueue = '1.1';
-    let matrixViewMode = 'detail'; // 'detail' (основна) або 'all' (усі 12 підчерг)
-    let schedules = {};
-    let isEmergencyActive = false;
-    let lastScheduleUpdatedAt = 0;
-    let lastProcessedSignature = '';
-    let lastSeenBroadcastId = '';
-    let emergencyMessage = {
-      title: 'У Запоріжжі діють графіки аварійних відключень (ГАВ / СГАВ)',
-      desc: 'За командою НЕК «Укренерго» застосовані екстрені аварійні відключення. Погодинні графіки (ГПВ) тимчасово не діють.',
-      time: 'LIVE'
-    };
-
-    try {
-      const savedQ = localStorage.getItem('zp_svitlo_selected_queue');
-      if (savedQ && ALL_QUEUES.includes(savedQ)) selectedQueue = savedQ;
-      const savedBc = localStorage.getItem('zp_svitlo_seen_broadcast_id');
-      if (savedBc) lastSeenBroadcastId = savedBc;
-    } catch (e) {}
-
-    window.setMatrixView = function (mode) {
-      matrixViewMode = mode === 'all' ? 'all' : 'detail';
-      const detailBtn = document.getElementById('tabDetailView');
-      const allBtn = document.getElementById('tabAllView');
-      const detailContainer = document.getElementById('detailMatrixContainer');
-      const allContainer = document.getElementById('allQueuesMatrixContainer');
-      const hintText = document.getElementById('matrixHintText');
-
-      if (matrixViewMode === 'detail') {
-        if (detailBtn) detailBtn.classList.add('active');
-        if (allBtn) allBtn.classList.remove('active');
-        if (detailContainer) detailContainer.classList.remove('hidden');
-        if (allContainer) allContainer.classList.add('hidden');
-        if (hintText) hintText.textContent = 'КРОК: :00 / :30';
-      } else {
-        if (detailBtn) detailBtn.classList.remove('active');
-        if (allBtn) allBtn.classList.add('active');
-        if (detailContainer) detailContainer.classList.add('hidden');
-        if (allContainer) allContainer.classList.remove('hidden');
-        if (hintText) hintText.textContent = 'КЛІК ПО РЯДКУ ОБИРАЄ ЧЕРГУ';
-      }
-      renderScheduleMatrix();
-    };
-
-    // =========================================================================
-    // 2. ПЕРЕХІД ЗІ СТАРТОВОГО ЕКРАНА ТА УТИЛІТИ ІНТЕРФЕЙСУ
-    // =========================================================================
-    document.documentElement.classList.add('splash-locked');
-    document.body.classList.add('splash-locked');
-
-    window.enterApp = function () {
-      const entry = document.getElementById('splashScreen');
-      const mainApp = document.getElementById('mainApp');
-      document.documentElement.classList.remove('splash-locked');
-      document.body.classList.remove('splash-locked');
-      if (mainApp) mainApp.classList.remove('hidden');
-      if (entry) {
-        entry.classList.add('closing');
-        setTimeout(() => {
-          entry.classList.add('hidden');
-          entry.style.display = 'none';
-          triggerScanEffect();
-        }, 200);
-      }
-      window.scrollTo({ top: 0, behavior: 'instant' });
-    };
-
-    window.showEntryScreen = function () {
-      const entry = document.getElementById('splashScreen');
-      const mainApp = document.getElementById('mainApp');
-      if (mainApp) mainApp.classList.add('hidden');
-      if (entry) {
-        entry.style.display = '';
-        entry.classList.remove('hidden', 'closing');
-      }
-      document.documentElement.classList.add('splash-locked');
-      document.body.classList.add('splash-locked');
-    };
-
-    window.openModal = function (id) {
-      const el = document.getElementById(id);
-      if (el) el.classList.remove('hidden');
-    };
-
-    window.closeModal = function (id) {
-      const el = document.getElementById(id);
-      if (el) el.classList.add('hidden');
-    };
-
-    function showToast(sticker, text) {
-      const box = document.getElementById('toastBox');
-      const stEl = document.getElementById('toastSticker');
-      const txEl = document.getElementById('toastText');
-      if (!box) return;
-      stEl.textContent = sticker;
-      txEl.textContent = text;
-      box.classList.remove('hidden');
-      clearTimeout(window._toastTimer);
-      window._toastTimer = setTimeout(() => box.classList.add('hidden'), 3000);
-    }
-
-    function triggerScanEffect() {
-      const line = document.getElementById('radarScanLine');
-      if (!line) return;
-      line.classList.remove('scanning');
-      void line.offsetWidth;
-      line.classList.add('scanning');
-    }
-
-    // =========================================================================
-    // 3. ЛОГІКА 48 ПІВГОДИННИХ СЛОТІВ (:00 ТА :30)
-    // =========================================================================
-    function timeToSlotIndex(hhmm) {
-      const [hStr, mStr] = hhmm.split(':');
-      const h = parseInt(hStr, 10);
-      const m = parseInt(mStr, 10);
-      if (h === 24) return 48;
-      return h * 2 + (m >= 30 ? 1 : 0);
-    }
-
-    function slotIndexToTime(slotIdx) {
-      const totalMins = slotIdx * 30;
-      const h = Math.floor(totalMins / 60);
-      const m = totalMins % 60;
-      return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
-    }
-
-    function buildSlotsFromIntervals(intervalList) {
-      const slots = new Array(48).fill(0);
-      (intervalList || []).forEach(range => {
-        const [startStr, endStr] = range.split('-');
-        const sSlot = timeToSlotIndex(startStr);
-        const eSlot = timeToSlotIndex(endStr);
-        for (let i = sSlot; i < eSlot && i < 48; i++) {
-          slots[i] = 1;
-        }
+      // Вшитий актуальний графік за замовчуванням (0 = світло є, 1 = відключення)
+      const ACTUAL_DEFAULT_RANGES = Object.freeze({
+        '1.1': ['00:00-04:30', '19:00-24:00'],
+        '1.2': ['00:00-04:30', '22:00-24:00'],
+        '2.1': ['17:30-22:30'],
+        '2.2': ['00:00-01:30', '17:30-22:30'],
+        '3.1': ['04:00-05:30', '18:00-23:00'],
+        '3.2': ['04:00-05:30', '15:30-18:30'],
+        '4.1': ['08:30-13:30', '17:30-22:30'],
+        '4.2': ['00:00-00:30', '15:30-19:30', '23:30-24:00'],
+        '5.1': ['00:00-04:30', '08:30-13:30', '17:30-22:30'],
+        '5.2': ['04:00-09:00', '22:30-24:00'],
+        '6.1': ['00:00-04:30', '13:00-18:00', '22:00-24:00'],
+        '6.2': ['04:00-09:00', '13:00-18:00', '22:00-24:00']
       });
-      return slots;
-    }
 
-    function initActualSchedules() {
-      ALL_QUEUES.forEach(q => {
-        schedules[q] = buildSlotsFromIntervals(ACTUAL_DEFAULT_INTERVALS[q]);
-      });
+      let selectedQueue = '5.2';
       try {
-        const cached = localStorage.getItem('zp_svitlo_schedules_v4');
-        if (cached) {
-          const parsed = JSON.parse(cached);
-          if (parsed && parsed.schedules && Array.isArray(parsed.schedules['1.1']) && parsed.schedules['1.1'].length === 48) {
-            const allOffCheck = parsed.schedules['5.2'] && parsed.schedules['5.2'].every(v => v === 1);
-            if (!allOffCheck) {
-              schedules = parsed.schedules;
-              lastScheduleUpdatedAt = parsed.updatedAt || 0;
-              if (typeof parsed.isEmergencyActive === 'boolean') {
-                isEmergencyActive = parsed.isEmergencyActive;
-              }
-              if (parsed.snippet) {
-                document.getElementById('latestOfficialSnippet').textContent = parsed.snippet;
-              }
-            }
-          }
-        }
+        const savedQ = localStorage.getItem('zp_svitlo_queue');
+        if (savedQ && ALL_QUEUES.includes(savedQ)) selectedQueue = savedQ;
       } catch (e) {}
-    }
 
-    function persistSchedulesLocally(snippetText) {
+      let matrixViewMode = 'detail';
+      let schedules = Object.create(null);
+      let isEmergencyActive = false;
+      let queue21HasExplicitOutage = false;
+      let emergencyMessage = {
+        title: 'У Запоріжжі застосовано графіки аварійних відключень (ГАВ)',
+        desc: 'Погодинні графіки (ГПВ) тимчасово не діють до стабілізації енергосистеми.',
+        time: 'LIVE'
+      };
+
+      let activeTgChannelUrl = DEFAULT_TG_URL;
+      let lastScheduleUpdatedAt = 0;
+      let lastConfigUpdatedAt = 0;
+      let lastProcessedPostKey = '';
+      let dismissedBroadcastId = '';
       try {
-        localStorage.setItem('zp_svitlo_schedules_v4', JSON.stringify({
-          schedules,
-          isEmergencyActive,
-          updatedAt: lastScheduleUpdatedAt,
-          snippet: snippetText || document.getElementById('latestOfficialSnippet').textContent
-        }));
+        lastProcessedPostKey = localStorage.getItem('zp_svitlo_last_post_key') || '';
+        dismissedBroadcastId = localStorage.getItem('zp_svitlo_dismissed_bc') || '';
       } catch (e) {}
-    }
 
-    function getKyivNow() {
-      try {
-        const str = new Date().toLocaleString('en-US', { timeZone: 'Europe/Kyiv' });
-        return new Date(str);
-      } catch (e) {
-        return new Date();
+      let activeBroadcastData = null;
+      let isSyncInProgress = false;
+      let toastTimer = null;
+
+      // Анти-брутфорс захист для коду доступу
+      let failedAuthAttempts = 0;
+      let authLockoutUntil = 0;
+
+      // =========================================================================
+      // 2. УТИЛІТИ БЕЗПЕКИ (SHA-256, САНІТИЗАЦІЯ, ЧАС KYIV)
+      // =========================================================================
+      async function sha256Hex(plain) {
+        const enc = new TextEncoder().encode(String(plain));
+        const buf = await crypto.subtle.digest('SHA-256', enc);
+        return Array.from(new Uint8Array(buf))
+          .map(b => b.toString(16).padStart(2, '0'))
+          .join('');
       }
-    }
 
-    function getCurrentSlotIndex(nowDate = getKyivNow()) {
-      return nowDate.getHours() * 2 + (nowDate.getMinutes() >= 30 ? 1 : 0);
-    }
+      async function verifyAdminCode(inputCode) {
+        const now = Date.now();
+        if (now < authLockoutUntil) {
+          const secLeft = Math.ceil((authLockoutUntil - now) / 1000);
+          return { ok: false, reason: `Забагато спроб. Зачекайте ${secLeft} сек.` };
+        }
+        const trimmed = String(inputCode || '').trim();
+        if (!trimmed || trimmed.length > 32) {
+          return { ok: false, reason: 'Невірний код доступу' };
+        }
+        const hash = await sha256Hex(trimmed);
+        if (hash === EXPECTED_AUTH_HASH) {
+          failedAuthAttempts = 0;
+          return { ok: true, hash };
+        }
+        failedAuthAttempts++;
+        await new Promise(r => setTimeout(r, 450));
+        if (failedAuthAttempts >= 5) {
+          authLockoutUntil = Date.now() + 120000;
+          failedAuthAttempts = 0;
+          return { ok: false, reason: 'Доступ тимчасово заблоковано на 2 хвилини' };
+        }
+        return { ok: false, reason: 'Невірний код доступу' };
+      }
 
-    function getQueueMeta(id) {
-      return OFFICIAL_SUBQUEUES.find(q => q.id === id) || OFFICIAL_SUBQUEUES[0];
-    }
+      function sanitizeText(val, maxLen = 400) {
+        if (typeof val !== 'string') return '';
+        return val.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, '').trim().slice(0, maxLen);
+      }
 
-    function formatIntervalsFromSlots(slotsArr) {
-      const intervals = [];
-      let inOff = false;
-      let startSlot = 0;
-
-      for (let i = 0; i <= 48; i++) {
-        const val = i < 48 ? slotsArr[i] : 0;
-        if (val === 1 && !inOff) {
-          inOff = true;
-          startSlot = i;
-        } else if (val === 0 && inOff) {
-          inOff = false;
-          const durHours = (i - startSlot) * 0.5;
-          const durLabel = Number.isInteger(durHours) ? `${durHours} год` : `${durHours.toFixed(1)} год`;
-          intervals.push(`${slotIndexToTime(startSlot)} – ${slotIndexToTime(i)} (${durLabel})`);
+      function normalizeTelegramUrl(rawUrl) {
+        const clean = sanitizeText(rawUrl, 160);
+        if (!clean) return null;
+        try {
+          const u = new URL(clean);
+          if (u.protocol !== 'https:') return null;
+          if (u.hostname !== 't.me' && u.hostname !== 'telegram.me') return null;
+          const parts = u.pathname.split('/').filter(Boolean);
+          if (parts.length === 0) return null;
+          const slug = parts[0] === 's' ? parts[1] : parts[0];
+          if (!slug || !/^[a-zA-Z0-9_]{4,40}$/.test(slug)) return null;
+          return `https://t.me/s/${slug}`;
+        } catch (e) {
+          return null;
         }
       }
-      return intervals;
-    }
 
-    // =========================================================================
-    // 4. РЕНДЕР КАРТОК ЧЕРГ, ТАКТИЧНОЇ МАТРИЦІ ТА ТЕЛЕМЕТРІЇ
-    // =========================================================================
-    function renderQueueButtons() {
-      const container = document.getElementById('queueSelectorGrid');
-      if (!container) return;
-      const nowSlot = getCurrentSlotIndex();
-
-      container.innerHTML = OFFICIAL_SUBQUEUES.map(item => {
-        const q = item.id;
-        const isSelected = q === selectedQueue;
-        const qSlots = schedules[q] || new Array(48).fill(0);
-        const isOffNow = !item.isJuridicalOnly && (qSlots[nowSlot] === 1) && !isEmergencyActive;
-
-        let badgeHtml = '';
-        if (item.isJuridicalOnly) {
-          badgeHtml = `<span class="queue-badge badge-jur">ЮР.</span>`;
-        } else if (isEmergencyActive) {
-          badgeHtml = `<span class="queue-badge badge-off">ГАВ</span>`;
-        } else if (isOffNow) {
-          badgeHtml = `<span class="queue-badge badge-off">ВИМК</span>`;
-        } else {
-          badgeHtml = `<span class="queue-badge badge-on">СВІТЛО</span>`;
+      function isSafeObject(obj) {
+        if (!obj || typeof obj !== 'object' || Array.isArray(obj)) return false;
+        const keys = Object.keys(obj);
+        if (keys.includes('__proto__') || keys.includes('constructor') || keys.includes('prototype')) {
+          return false;
         }
+        return true;
+      }
 
-        let nextChangeLabel = '';
-        if (!item.isJuridicalOnly && !isEmergencyActive) {
-          const curSt = qSlots[nowSlot];
-          for (let off = 1; off <= 48; off++) {
-            const chk = (nowSlot + off) % 48;
-            if (qSlots[chk] !== curSt) {
-              nextChangeLabel = `${curSt === 0 ? 'вимк' : 'увімк'} ${slotIndexToTime(chk)}`;
-              break;
-            }
+      function getKyivNow() {
+        try {
+          const str = new Date().toLocaleString('en-US', { timeZone: 'Europe/Kyiv' });
+          return new Date(str);
+        } catch (e) {
+          return new Date();
+        }
+      }
+
+      function getCurrentSlotIndex() {
+        const now = getKyivNow();
+        return now.getHours() * 2 + (now.getMinutes() >= 30 ? 1 : 0);
+      }
+
+      function slotIndexToTime(idx) {
+        const safeIdx = ((idx % 48) + 48) % 48;
+        const h = Math.floor(safeIdx / 2);
+        const m = (safeIdx % 2) * 30;
+        return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+      }
+
+      function formatIntervalsFromSlots(arr) {
+        if (!Array.isArray(arr) || arr.length < 48) return [];
+        const intervals = [];
+        let start = null;
+        for (let i = 0; i <= 48; i++) {
+          const isOff = i < 48 ? arr[i] === 1 : false;
+          if (isOff && start === null) {
+            start = i;
+          } else if (!isOff && start !== null) {
+            const endStr = i === 48 ? '24:00' : slotIndexToTime(i);
+            intervals.push(`${slotIndexToTime(start)} - ${endStr}`);
+            start = null;
           }
-        } else if (item.isJuridicalOnly) {
-          nextChangeLabel = 'не нас.';
         }
-
-        return `
-          <button type="button" onclick="window.selectQueue('${q}')" class="queue-card ${isSelected ? 'active' : ''}">
-            <div class="queue-card-top">
-              <span class="queue-num">${q}</span>
-              ${badgeHtml}
-            </div>
-            <div class="queue-next">${nextChangeLabel}</div>
-          </button>
-        `;
-      }).join('');
-
-      const meta = getQueueMeta(selectedQueue);
-      document.getElementById('selectedQueueCodeBadge').textContent = meta.id;
-      document.getElementById('selectedQueueOfficialTitle').textContent = meta.label;
-      if (meta.isJuridicalOnly) {
-        const refIntervals = formatIntervalsFromSlots(schedules['2.1'] || new Array(48).fill(0)).join(', ');
-        document.getElementById('selectedQueueOfficialNote').textContent =
-          `Черга 2, підчерга 1 — юридичні споживачі, населення не задіяне (довідкові інтервали для юр. осіб: ${refIntervals || 'без обмежень'}).`;
-      } else {
-        document.getElementById('selectedQueueOfficialNote').textContent =
-          'Графік погодинних відключень із точністю до 30 хв. Автооновлення з @Zaporizhzhyaoblenergo_news.';
-      }
-    }
-
-    window.selectQueue = function (queue) {
-      selectedQueue = queue;
-      try {
-        localStorage.setItem('zp_svitlo_selected_queue', queue);
-      } catch (e) {}
-      triggerScanEffect();
-      renderQueueButtons();
-      renderScheduleMatrix();
-      updateRealtimeTelemetry();
-    };
-
-    function renderScheduleMatrix() {
-      const meta = getQueueMeta(selectedQueue);
-      const arr = schedules[selectedQueue] || new Array(48).fill(0);
-      const nowSlot = getCurrentSlotIndex();
-      const nowHour = Math.floor(nowSlot / 2);
-
-      const sectionTitleEl = document.getElementById('matrixSectionTitle');
-      if (sectionTitleEl) {
-        sectionTitleEl.textContent = matrixViewMode === 'detail'
-          ? 'Розклад обмежень (00:00 — 24:00)'
-          : 'Зведена таблиця усіх 12 підчерг (00:00 — 24:00)';
+        return intervals;
       }
 
-      document.getElementById('summaryQueueName').textContent = meta.label;
-      const intervals = formatIntervalsFromSlots(arr);
-      const summaryEl = document.getElementById('detailedIntervalsText');
-
-      if (meta.isJuridicalOnly) {
-        summaryEl.textContent = `Населення не задіяне • Юридичні споживачі: ${intervals.join(' • ') || 'без обмежень'}`;
-      } else if (isEmergencyActive) {
-        summaryEl.textContent = 'ДІЮТЬ АВАРІЙНІ ВІДКЛЮЧЕННЯ (ГАВ / СГАВ) — ПОГОДИННИЙ ГРАФІК ТИМЧАСОВО СКАСОВАНО';
-      } else if (intervals.length === 0) {
-        summaryEl.textContent = 'Відключень за графіком не заплановано';
-      } else {
-        summaryEl.textContent = intervals.join('  •  ');
+      function getQueueMeta(qId) {
+        return SUBQUEUES.find(item => item.id === qId) || SUBQUEUES[9];
       }
 
-      const offSlotsCount = arr.reduce((a, b) => a + b, 0);
-      const offHours = offSlotsCount * 0.5;
-      const onHours = 24 - offHours;
-      const fmtH = (val) => Number.isInteger(val) ? `${val} год` : `${val.toFixed(1)} год`;
-
-      document.getElementById('statHoursOn').textContent = meta.isJuridicalOnly ? 'Не задіяне' : isEmergencyActive ? '—' : fmtH(onHours);
-      document.getElementById('statHoursOff').textContent = meta.isJuridicalOnly ? `Юр: ${fmtH(offHours)}` : isEmergencyActive ? 'ГАВ' : fmtH(offHours);
-
-      // Варіант 1 (ОСНОВНИЙ): Тактична сітка 8x3 на 24 години (:00 / :30)
-      const detailContainer = document.getElementById('detailMatrixContainer');
-      if (detailContainer) {
-        let cardsHtml = '';
-        for (let h = 0; h < 24; h++) {
-          const slot0 = h * 2;
-          const slot1 = h * 2 + 1;
-          const isNowHour = h === nowHour;
-          const val0 = arr[slot0];
-          const val1 = arr[slot1];
-          const hourLabel = `${String(h).padStart(2, '0')}:00`;
-
-          let cardStateClass = 'card-on';
-          let stickerEmoji = '💡';
-          let statusLabel = 'СВІТЛО Є';
-          let bar0Class = 'is-on';
-          let bar1Class = 'is-on';
-
-          if (meta.isJuridicalOnly) {
-            cardStateClass = 'card-partial';
-            stickerEmoji = '🏢';
-            statusLabel = 'ЮР. ОСОБИ';
-            bar0Class = val0 === 1 ? 'is-jur' : 'is-off';
-            bar1Class = val1 === 1 ? 'is-jur' : 'is-off';
-          } else if (isEmergencyActive) {
-            cardStateClass = 'card-off';
-            stickerEmoji = '🚨';
-            statusLabel = 'ГАВ';
-            bar0Class = 'is-off';
-            bar1Class = 'is-off';
-          } else if (val0 === 1 && val1 === 1) {
-            cardStateClass = 'card-off';
-            stickerEmoji = '🕯️';
-            statusLabel = 'НЕМАЄ';
-            bar0Class = 'is-off';
-            bar1Class = 'is-off';
-          } else if (val0 === 1 || val1 === 1) {
-            cardStateClass = 'card-partial';
-            stickerEmoji = val0 === 1 ? '🕯️' : '💡';
-            statusLabel = 'ЧАСТКОВО';
-            bar0Class = val0 === 1 ? 'is-off' : 'is-on';
-            bar1Class = val1 === 1 ? 'is-off' : 'is-on';
-          }
-
-          cardsHtml += `
-            <div class="hour-card ${cardStateClass} ${isNowHour ? 'is-now' : ''}">
-              <div class="hour-card-head">
-                <span>${hourLabel}</span>
-                <span class="ios-sticker-dark" style="font-size: 16px;">${stickerEmoji}</span>
-              </div>
-              <div class="hour-status-text">${statusLabel}</div>
-              <div class="half-slots-wrap">
-                <div class="half-bars-row">
-                  <div class="half-bar ${bar0Class}"></div>
-                  <div class="half-bar ${bar1Class}"></div>
-                </div>
-                <div class="half-labels-row">
-                  <span>:00</span>
-                  <span>:30</span>
-                </div>
-              </div>
-            </div>
-          `;
-        }
-        detailContainer.innerHTML = cardsHtml;
+      function buildDefaultSchedules() {
+        const map = Object.create(null);
+        ALL_QUEUES.forEach(q => {
+          const arr = new Array(48).fill(0);
+          const ranges = ACTUAL_DEFAULT_RANGES[q] || [];
+          ranges.forEach(r => {
+            const parsed = parseIntervalsFromString(r);
+            parsed.forEach(([s, e]) => {
+              for (let i = s; i < e && i < 48; i++) arr[i] = 1;
+            });
+          });
+          map[q] = arr;
+        });
+        return map;
       }
 
-      // Варіант 2: Зведена таблиця всіх 12 підчерг
-      const headerRow = document.getElementById('matrixHeaderRow');
-      if (headerRow && headerRow.children.length === 1) {
-        for (let h = 0; h < 24; h++) {
-          const th = document.createElement('th');
-          th.id = `th-hour-${h}`;
-          th.colSpan = 2;
-          th.style.padding = '7px 2px';
-          th.style.textAlign = 'center';
-          th.style.borderRight = '1px solid rgba(255,255,255,0.1)';
-          th.textContent = String(h).padStart(2, '0');
-          headerRow.appendChild(th);
-        }
-      }
-
-      for (let h = 0; h < 24; h++) {
-        const th = document.getElementById(`th-hour-${h}`);
-        if (th) {
-          th.style.background = h === nowHour ? '#ffffff' : 'transparent';
-          th.style.color = h === nowHour ? '#09090b' : '#a1a1aa';
-          th.style.fontWeight = h === nowHour ? '800' : '500';
-        }
-      }
-
-      const tbody = document.getElementById('matrixTableBody');
-      if (tbody) {
-        tbody.innerHTML = OFFICIAL_SUBQUEUES.map(item => {
-          const q = item.id;
-          const qArr = schedules[q] || new Array(48).fill(0);
-          const isRowSelected = q === selectedQueue;
-
-          const cells = qArr.map((val, slotIdx) => {
-            const isCurrSlot = slotIdx === nowSlot;
-            let cellClass = 'hatch-on';
-            if (item.isJuridicalOnly) {
-              cellClass = val === 1 ? 'hatch-jur' : 'hatch-jur';
-            } else if (isEmergencyActive || val === 1) {
-              cellClass = 'hatch-off';
-            }
-            const borderRight = slotIdx % 2 === 1 ? 'border-right: 1px solid rgba(255,255,255,0.12);' : '';
-            const jurOpacity = item.isJuridicalOnly ? (val === 1 ? 'opacity: 1;' : 'opacity: 0.35;') : '';
-            const currOutline = isCurrSlot ? 'outline: 1.5px solid #ffffff; outline-offset: -1px;' : '';
-            return `<td class="slot-cell ${isCurrSlot ? 'laser-now' : ''}" style="${borderRight}"><div class="${cellClass}" style="height: 22px; border-radius: 3px; ${jurOpacity} ${currOutline}"></div></td>`;
-          }).join('');
-
-          return `
-            <tr onclick="window.selectQueue('${q}')" style="cursor: pointer; background: ${isRowSelected ? 'rgba(255,255,255,0.09)' : 'transparent'};">
-              <td class="matrix-sticky-col" style="background: ${isRowSelected ? '#ffffff' : '#18181d'}; color: ${isRowSelected ? '#09090b' : '#ffffff'}; font-weight: 800;">
-                ${q}${item.isJuridicalOnly ? ' (Юр.)' : ''}
-              </td>
-              ${cells}
-            </tr>
-          `;
-        }).join('');
-      }
-    }
-
-    function updateRealtimeTelemetry() {
-      const now = getKyivNow();
-      const h = now.getHours();
-      const m = now.getMinutes();
-      const s = now.getSeconds();
-      const nowSlot = getCurrentSlotIndex(now);
-
-      const timeStr = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-      const clockEl = document.getElementById('liveClock');
-      const entryClockEl = document.getElementById('entryClock');
-      const entryStatusEl = document.getElementById('entryGridStatus');
-      const entryDateEl = document.getElementById('entryDateText');
-
-      if (clockEl) clockEl.textContent = timeStr;
-      if (entryClockEl) entryClockEl.textContent = timeStr;
-      if (entryStatusEl) entryStatusEl.textContent = isEmergencyActive ? 'АВАРІЙНІ (ГАВ)' : 'ГПВ АКТИВНИЙ';
-      if (entryDateEl) {
-        const dateFormatted = now.toLocaleDateString('uk-UA', { day: 'numeric', month: 'long', year: 'numeric' });
-        entryDateEl.textContent = `ЗАПОРІЖЖЯ • ${dateFormatted}`;
-      }
-
-      const meta = getQueueMeta(selectedQueue);
-      document.getElementById('heroQueueBadge').textContent = meta.short.toUpperCase();
-
-      const arr = schedules[selectedQueue] || new Array(48).fill(0);
-      const currentState = arr[nowSlot];
-
-      const titleEl = document.getElementById('heroStatusTitle');
-      const subEl = document.getElementById('heroStatusSubtitle');
-      const stickerEl = document.getElementById('heroSticker');
-      const cdLabel = document.getElementById('countdownLabel');
-      const cdTimer = document.getElementById('countdownTimer');
-      const nextTimeEl = document.getElementById('nextEventTime');
-      const progBar = document.getElementById('intervalProgressBar');
-      const startLbl = document.getElementById('intervalStartLabel');
-      const endLbl = document.getElementById('intervalEndLabel');
-      const pctLbl = document.getElementById('intervalPercentLabel');
-
-      if (meta.isJuridicalOnly) {
-        titleEl.textContent = 'Населення не задіяне';
-        subEl.textContent = 'ЧЕРГА 2, ПІДЧЕРГА 1 — ЮРИДИЧНІ СПОЖИВАЧІ';
-        stickerEl.textContent = '🏢';
-        cdLabel.textContent = 'СТАТУС ДЛЯ НАСЕЛЕННЯ:';
-        cdTimer.textContent = 'Не застосовується';
-        nextTimeEl.textContent = 'Тільки юр. особи';
-        progBar.style.width = '100%';
-        startLbl.textContent = 'КАТЕГОРІЯ: ЮР. ОСОБИ';
-        endLbl.textContent = 'ZOE.COM.UA';
-        pctLbl.textContent = '—';
-        return;
-      }
-
-      if (isEmergencyActive) {
-        titleEl.textContent = 'Аварійні відключення (ГАВ)';
-        subEl.textContent = 'ЕКСТРЕНІ ОБМЕЖЕННЯ • ПОГОДИННИЙ ГРАФІК НЕ ДІЄ';
-        stickerEl.textContent = '🚨';
-        cdLabel.textContent = 'РЕЖИМ МЕРЕЖІ:';
-        cdTimer.textContent = 'ГАВ // БЕЗ ГРАФІКА';
-        nextTimeEl.textContent = 'Чекаємо команду Укренерго';
-        progBar.style.width = '100%';
-        startLbl.textContent = 'СТАТУС: ЕКСТРЕНИЙ';
-        endLbl.textContent = 'ДЖЕРЕЛО: ZOE';
-        pctLbl.textContent = 'LIVE';
-        return;
-      }
-
-      if (currentState === 0) {
-        titleEl.textContent = 'Світло є';
-        subEl.textContent = 'ФАЗА АКТИВНА • НАПРУГА В МЕРЕЖІ СТАБІЛЬНА';
-        stickerEl.textContent = '💡';
-        cdLabel.textContent = 'ДО ПЛАНОВОГО ВІДКЛЮЧЕННЯ:';
-      } else {
-        titleEl.textContent = 'Світло відключено (ГПВ)';
-        subEl.textContent = 'ПЛАНОВЕ ОБМЕЖЕННЯ ЗА ПІДЧЕРГОЮ ' + selectedQueue;
-        stickerEl.textContent = '🕯️';
-        cdLabel.textContent = 'ДО ВКЛЮЧЕННЯ СВІТЛА:';
-      }
-
-      let slotsUntilChange = 0;
-      for (let offset = 1; offset <= 48; offset++) {
-        const checkSlot = (nowSlot + offset) % 48;
-        if (arr[checkSlot] !== currentState) {
-          slotsUntilChange = offset;
-          break;
-        }
-      }
-
-      let slotsSinceStart = 0;
-      for (let back = 1; back <= 48; back++) {
-        const prevSlot = (nowSlot - back + 48) % 48;
-        if (arr[prevSlot] !== currentState) {
-          slotsSinceStart = back - 1;
-          break;
-        }
-      }
-
-      if (slotsUntilChange === 0) {
-        cdTimer.textContent = 'Без відключень';
-        nextTimeEl.textContent = 'Перевіряйте канал ZOE';
-        progBar.style.width = '100%';
-        startLbl.textContent = '00:00';
-        endLbl.textContent = '24:00';
-        pctLbl.textContent = '100%';
-        return;
-      }
-
-      const minsIntoCurrentSlot = m % 30;
-      const secsLeftInCurrentSlot = (29 - minsIntoCurrentSlot) * 60 + (60 - s);
-      const totalSecondsLeft = (slotsUntilChange - 1) * 1800 + secsLeftInCurrentSlot;
-
-      const remH = Math.floor(totalSecondsLeft / 3600);
-      const remM = Math.floor((totalSecondsLeft % 3600) / 60);
-      const remS = totalSecondsLeft % 60;
-
-      cdTimer.textContent = `${String(remH).padStart(2, '0')}:${String(remM).padStart(2, '0')}:${String(remS).padStart(2, '0')}`;
-
-      const targetSlot = (nowSlot + slotsUntilChange) % 48;
-      const startSlot = (nowSlot - slotsSinceStart + 48) % 48;
-      nextTimeEl.textContent = `о ${slotIndexToTime(targetSlot)}`;
-
-      const totalIntervalSeconds = (slotsSinceStart + slotsUntilChange) * 1800;
-      const elapsedSeconds = slotsSinceStart * 1800 + minsIntoCurrentSlot * 60 + s;
-      const pct = Math.min(100, Math.max(2, Math.round((elapsedSeconds / totalIntervalSeconds) * 100)));
-
-      progBar.style.width = pct + '%';
-      startLbl.textContent = `ПОЧАТОК: ${slotIndexToTime(startSlot)}`;
-      endLbl.textContent = `КІНЕЦЬ: ${slotIndexToTime(targetSlot)}`;
-      pctLbl.textContent = `${pct}%`;
-    }
-
-    // =========================================================================
-    // 5. АВАРІЙНИЙ РЕЖИМ (ГАВ / СГАВ) ТА ПАРСЕР TELEGRAM ZOE
-    // =========================================================================
-    function toggleEmergencyMode(active) {
-      isEmergencyActive = active;
-      const banner = document.getElementById('emergencyBanner');
-      if (banner) {
-        if (active) {
-          document.getElementById('gavTitle').textContent = emergencyMessage.title;
-          document.getElementById('gavDesc').textContent = emergencyMessage.desc;
-          document.getElementById('gavTimeBadge').textContent = emergencyMessage.time;
-          banner.classList.remove('hidden');
-        } else {
-          banner.classList.add('hidden');
-        }
-      }
-      renderQueueButtons();
-      renderScheduleMatrix();
-      updateRealtimeTelemetry();
-    }
-
-    function extractSchedulesFromZoeText(rawText) {
-      const lower = rawText.toLowerCase();
-      const hasEmergencyKeyword =
-        lower.includes('гав') ||
-        lower.includes('сгав') ||
-        lower.includes('графіки аварійних відключень') ||
-        lower.includes('аварійні відключення') ||
-        lower.includes('екстрені відключення');
-
-      if (hasEmergencyKeyword) {
-        const isCancelled = lower.includes('скасовано') || lower.includes('відмінено') || lower.includes('повернення до гпв');
-        return { type: isCancelled ? 'emergency_off' : 'emergency_on', text: rawText };
-      }
-
-      const isPartialAdjustment =
-        lower.includes('оновлений графік') ||
-        lower.includes('зміни у гпв') ||
-        lower.includes('коригування') ||
-        lower.includes('додатково');
-
-      const parsedMap = {};
-      ALL_QUEUES.forEach(q => {
-        parsedMap[q] = isPartialAdjustment && Array.isArray(schedules[q])
-          ? [...schedules[q]]
-          : new Array(48).fill(0);
-      });
-      let foundQueuesCount = 0;
-
-      const normalized = rawText
-        .replace(/Черга\s*([1-6])\s*[\(,]\s*підчерга\s*([1-2])\s*\)?/gi, '$1.$2')
-        .replace(/([1-2])\s*підчерга\s*([1-6])\s*черги/gi, '$2.$1')
-        .replace(/з\s+(\d{1,2}:\d{2})\s+до\s+(\d{1,2}:\d{2})/gi, '$1-$2');
-
-      const lines = normalized.split(/\n+/);
-      lines.forEach(line => {
-        const queueMatches = [...line.matchAll(/\b([1-6]\.[1-2])\b/g)];
-        if (queueMatches.length > 0) {
-          const timeRegex = /(\d{1,2}):(\d{2})\s*[-–—]\s*(\d{1,2}):(\d{2})/g;
-          const slotIntervals = [];
-          let tMatch;
-          while ((tMatch = timeRegex.exec(line)) !== null) {
-            const sH = parseInt(tMatch[1], 10);
-            const sM = parseInt(tMatch[2], 10);
-            const eH = parseInt(tMatch[3], 10);
-            const eM = parseInt(tMatch[4], 10);
-
-            const sSlot = sH * 2 + (sM >= 30 ? 1 : 0);
-            let eSlot = eH * 2 + (eM >= 30 ? 1 : 0);
-            if (eH === 0 && eM === 0) eSlot = 48;
-            if (eH === 23 && eM >= 50) eSlot = 48;
-
-            if (eSlot > sSlot) slotIntervals.push([sSlot, eSlot]);
-          }
-
-          if (slotIntervals.length > 0) {
-            foundQueuesCount += queueMatches.length;
-            queueMatches.forEach(qm => {
-              const q = qm[1];
-              parsedMap[q] = new Array(48).fill(0);
-              slotIntervals.forEach(([sSlot, eSlot]) => {
-                for (let idx = sSlot; idx < eSlot && idx < 48; idx++) {
-                  parsedMap[q][idx] = 1;
+      function initSchedulesState() {
+        schedules = buildDefaultSchedules();
+        try {
+          const cached = localStorage.getItem('zp_svitlo_schedules_v4');
+          if (cached) {
+            const parsed = JSON.parse(cached);
+            if (isSafeObject(parsed) && isSafeObject(parsed.schedules)) {
+              let valid = true;
+              ALL_QUEUES.forEach(q => {
+                if (!Array.isArray(parsed.schedules[q]) || parsed.schedules[q].length !== 48) {
+                  valid = false;
                 }
               });
-            });
+              if (valid) {
+                ALL_QUEUES.forEach(q => {
+                  schedules[q] = parsed.schedules[q].map(v => (v === 1 ? 1 : 0));
+                });
+                lastScheduleUpdatedAt = Number(parsed.updatedAt) || 0;
+              }
+            }
           }
-        }
-      });
-
-      if (foundQueuesCount > 0) {
-        return { type: 'schedule_update', schedules: parsedMap, text: rawText };
+          const savedTg = localStorage.getItem('zp_svitlo_tg_url');
+          const normTg = normalizeTelegramUrl(savedTg);
+          if (normTg) activeTgChannelUrl = normTg;
+        } catch (e) {}
       }
-      return null;
-    }
 
-    function applyParsedResult(result, sourceName, pushToFirebase = true) {
-      if (!result) return false;
-      const shortSnippet = result.text.replace(/\s+/g, ' ').trim().slice(0, 185);
-      lastScheduleUpdatedAt = Date.now();
+      function persistSchedulesLocally() {
+        try {
+          localStorage.setItem('zp_svitlo_schedules_v4', JSON.stringify({
+            schedules,
+            updatedAt: lastScheduleUpdatedAt
+          }));
+        } catch (e) {}
+      }
 
-      if (result.type === 'emergency_on') {
-        emergencyMessage = {
-          title: 'У Запоріжжі діють графіки аварійних відключень (ГАВ / СГАВ)',
-          desc: result.text.length > 260 ? result.text.slice(0, 257) + '...' : result.text,
-          time: 'LIVE // ' + sourceName
-        };
-        toggleEmergencyMode(true);
-      } else if (result.type === 'emergency_off') {
-        toggleEmergencyMode(false);
-      } else if (result.type === 'schedule_update') {
-        toggleEmergencyMode(false);
-        schedules = result.schedules;
-        triggerScanEffect();
+      // =========================================================================
+      // 3. БЕЗПЕЧНИЙ РЕНДЕР DOM (100% CREATEELEMENT / TEXTCONTENT, БЕЗ INNERHTML)
+      // =========================================================================
+      function clearElement(el) {
+        if (!el) return;
+        while (el.firstChild) {
+          el.removeChild(el.firstChild);
+        }
+      }
+
+      function createEl(tag, className, textContent) {
+        const el = document.createElement(tag);
+        if (className) el.className = className;
+        if (textContent !== undefined && textContent !== null) {
+          el.textContent = String(textContent);
+        }
+        return el;
+      }
+
+      function enterMonitoringApp() {
+        const splash = document.getElementById('splashScreen');
+        if (splash) splash.remove();
+        document.documentElement.classList.remove('splash-locked');
+        document.body.classList.remove('splash-locked');
+        window.scrollTo(0, 0);
+      }
+
+      function openModal(id) {
+        const el = document.getElementById(id);
+        if (el) el.classList.remove('hidden');
+      }
+
+      function closeModal(id) {
+        const el = document.getElementById(id);
+        if (el) el.classList.add('hidden');
+      }
+
+      function switchAdminTab(tab) {
+        document.getElementById('tabScheduleBtn').classList.toggle('active', tab === 'schedule');
+        document.getElementById('tabTgBtn').classList.toggle('active', tab === 'tg');
+        document.getElementById('tabAlertBtn').classList.toggle('active', tab === 'alert');
+
+        document.getElementById('paneSchedule').classList.toggle('hidden', tab !== 'schedule');
+        document.getElementById('paneTg').classList.toggle('hidden', tab !== 'tg');
+        document.getElementById('paneAlert').classList.toggle('hidden', tab !== 'alert');
+        document.getElementById('firebaseFeedbackBox').classList.add('hidden');
+
+        if (tab === 'tg') {
+          document.getElementById('tgChannelUrlInput').value = activeTgChannelUrl;
+        }
+      }
+
+      function showFeedbackBox(message, isSuccess) {
+        const box = document.getElementById('firebaseFeedbackBox');
+        if (!box) return;
+        box.textContent = message;
+        box.className = `feedback-banner ${isSuccess ? 'feedback-ok' : 'feedback-err'}`;
+        box.classList.remove('hidden');
+      }
+
+      function showToast(icon, text) {
+        const el = document.getElementById('toastNotification');
+        if (!el) return;
+        document.getElementById('toastIcon').textContent = icon;
+        document.getElementById('toastMessage').textContent = text;
+        el.classList.remove('hidden');
+        if (toastTimer) clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => el.classList.add('hidden'), 3200);
+      }
+
+      function setSyncSpinning(spinning) {
+        const icon = document.getElementById('headerRefreshIcon');
+        if (!icon) return;
+        if (spinning) icon.classList.add('spin-icon');
+        else icon.classList.remove('spin-icon');
+      }
+
+      function selectQueue(qId) {
+        if (!ALL_QUEUES.includes(qId)) return;
+        selectedQueue = qId;
+        try { localStorage.setItem('zp_svitlo_queue', qId); } catch (e) {}
         renderQueueButtons();
         renderScheduleMatrix();
         updateRealtimeTelemetry();
       }
 
-      document.getElementById('latestOfficialSnippet').textContent = shortSnippet;
-      persistSchedulesLocally(shortSnippet);
+      function renderQueueButtons() {
+        const container = document.getElementById('queueSelectorGrid');
+        if (!container) return;
+        clearElement(container);
 
-      if (pushToFirebase) {
-        pushScheduleToFirebase(shortSnippet, sourceName);
-      }
-      return true;
-    }
+        const nowSlot = getCurrentSlotIndex();
 
-    window.parseManualInput = function () {
-      const text = document.getElementById('manualZoeTextInput').value.trim();
-      if (!text) return;
-      const parsed = extractSchedulesFromZoeText(text);
-      if (parsed) {
-        applyParsedResult(parsed, 'Зведення ZOE', true);
-        window.closeModal('parserModal');
-        showToast('⚡', 'Графік оновлено та синхронізовано');
-      } else {
-        showToast('⚠️', 'Не знайдено черг виду 1.1: 08:00-12:00');
-      }
-    };
+        SUBQUEUES.forEach(item => {
+          const q = item.id;
+          const isSelected = q === selectedQueue;
+          const qSlots = schedules[q] || new Array(48).fill(0);
+          const isJurMode = item.isJuridicalOnly && !queue21HasExplicitOutage;
+          const isOffNow = !isJurMode && (qSlots[nowSlot] === 1) && !isEmergencyActive;
 
-    // =========================================================================
-    // 6. FIREBASE REALTIME DATABASE (/schedule.json ТА /broadcast.json)
-    // =========================================================================
-    async function pushScheduleToFirebase(snippetText, sourceName) {
-      try {
-        await fetch(`${FIREBASE_DB_URL}/schedule.json`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            schedules,
-            isEmergencyActive,
-            emergencyMessage,
-            snippet: snippetText,
-            source: sourceName,
-            updatedAt: lastScheduleUpdatedAt
-          })
-        });
-      } catch (e) {}
-    }
+          const btn = createEl('button', `queue-card ${isSelected ? 'active' : ''}`);
+          btn.type = 'button';
+          btn.addEventListener('click', () => selectQueue(q));
 
-    async function pollFirebaseState() {
-      try {
-        const [schedResp, bcResp] = await Promise.all([
-          fetch(`${FIREBASE_DB_URL}/schedule.json?_t=${Date.now()}`),
-          fetch(`${FIREBASE_DB_URL}/broadcast.json?_t=${Date.now()}`)
-        ]);
+          const top = createEl('div', 'queue-card-top');
+          const numSpan = createEl('span', 'queue-num', q);
 
-        if (schedResp.ok) {
-          const remoteSched = await schedResp.json();
-          if (remoteSched && remoteSched.updatedAt && remoteSched.updatedAt > lastScheduleUpdatedAt) {
-            const isBrokenAllOff = remoteSched.schedules && remoteSched.schedules['5.2'] && remoteSched.schedules['5.2'].every(v => v === 1);
-            if (!isBrokenAllOff) {
-              lastScheduleUpdatedAt = remoteSched.updatedAt;
-              if (remoteSched.schedules && Array.isArray(remoteSched.schedules['1.1'])) {
-                schedules = remoteSched.schedules;
+          let badgeClass = 'queue-badge badge-on';
+          let badgeLabel = 'СВІТЛО';
+          if (isJurMode) {
+            badgeClass = 'queue-badge badge-jur';
+            badgeLabel = 'ЮР.';
+          } else if (isEmergencyActive) {
+            badgeClass = 'queue-badge badge-off';
+            badgeLabel = 'ГАВ';
+          } else if (isOffNow) {
+            badgeClass = 'queue-badge badge-off';
+            badgeLabel = 'ВИМК';
+          }
+
+          const badgeSpan = createEl('span', badgeClass, badgeLabel);
+          top.appendChild(numSpan);
+          top.appendChild(badgeSpan);
+
+          let nextChange = '';
+          if (!isJurMode && !isEmergencyActive) {
+            const cur = qSlots[nowSlot];
+            for (let step = 1; step <= 48; step++) {
+              const idx = (nowSlot + step) % 48;
+              if (qSlots[idx] !== cur) {
+                nextChange = `${cur === 0 ? 'вимк' : 'увімк'} ${slotIndexToTime(idx)}`;
+                break;
               }
-              if (remoteSched.emergencyMessage) {
-                emergencyMessage = remoteSched.emergencyMessage;
-              }
-              if (remoteSched.snippet) {
-                document.getElementById('latestOfficialSnippet').textContent = remoteSched.snippet;
-              }
-              toggleEmergencyMode(Boolean(remoteSched.isEmergencyActive));
-              persistSchedulesLocally(remoteSched.snippet);
-              triggerScanEffect();
             }
+          } else if (isJurMode) {
+            nextChange = 'юр. особи';
+          }
+
+          const nextDiv = createEl('div', 'queue-next', nextChange);
+          btn.appendChild(top);
+          btn.appendChild(nextDiv);
+          container.appendChild(btn);
+        });
+
+        const meta = getQueueMeta(selectedQueue);
+        const isSelectedJur = meta.isJuridicalOnly && !queue21HasExplicitOutage;
+        document.getElementById('selectedQueueCodeBadge').textContent = meta.id;
+        document.getElementById('selectedQueueOfficialTitle').textContent = isSelectedJur
+          ? meta.label
+          : `м. Запоріжжя, Черга ${meta.id.split('.')[0]}, підчерга ${meta.id.split('.')[1]}`;
+      }
+
+      function setMatrixView(mode) {
+        matrixViewMode = mode;
+        const isDetail = mode === 'detail';
+        document.getElementById('btnViewDetail').classList.toggle('active', isDetail);
+        document.getElementById('btnViewAll').classList.toggle('active', !isDetail);
+        document.getElementById('detailMatrixContainer').classList.toggle('hidden', !isDetail);
+        document.getElementById('allQueuesMatrixContainer').classList.toggle('hidden', isDetail);
+        renderScheduleMatrix();
+      }
+
+      function renderScheduleMatrix() {
+        const meta = getQueueMeta(selectedQueue);
+        const isSelectedJur = meta.isJuridicalOnly && !queue21HasExplicitOutage;
+        const arr = schedules[selectedQueue] || new Array(48).fill(0);
+        const nowSlot = getCurrentSlotIndex();
+        const nowHour = Math.floor(nowSlot / 2);
+
+        document.getElementById('matrixSectionTitle').textContent = matrixViewMode === 'detail'
+          ? 'Розклад обмежень (00:00 — 24:00)'
+          : 'Зведена таблиця усіх 12 підчерг (00:00 — 24:00)';
+
+        document.getElementById('summaryQueueName').textContent = meta.label;
+        const intervals = formatIntervalsFromSlots(arr);
+        const intervalsStr = intervals.length ? intervals.join('  •  ') : 'Відключень за графіком не заплановано';
+
+        const summaryEl = document.getElementById('detailedIntervalsText');
+        const telemetryPreviewEl = document.getElementById('telemetryIntervalsPreview');
+
+        if (isSelectedJur) {
+          const txt = `Юридичні споживачі • ${intervals.join(' • ') || 'без обмежень'}`;
+          summaryEl.textContent = txt;
+          if (telemetryPreviewEl) telemetryPreviewEl.textContent = txt;
+        } else if (isEmergencyActive) {
+          const txt = 'ДІЮТЬ АВАРІЙНІ ВІДКЛЮЧЕННЯ (ГАВ / СГАВ)';
+          summaryEl.textContent = txt;
+          if (telemetryPreviewEl) telemetryPreviewEl.textContent = txt;
+        } else {
+          summaryEl.textContent = intervalsStr;
+          if (telemetryPreviewEl) telemetryPreviewEl.textContent = intervalsStr;
+        }
+
+        const offSlots = arr.reduce((sum, v) => sum + v, 0);
+        const offHours = offSlots * 0.5;
+        const onHours = 24 - offHours;
+        const fmtH = (n) => Number.isInteger(n) ? `${n} год` : `${n.toFixed(1)} год`;
+
+        document.getElementById('statHoursOn').textContent = isSelectedJur ? 'Юр. особи' : isEmergencyActive ? '—' : fmtH(onHours);
+        document.getElementById('statHoursOff').textContent = isSelectedJur ? fmtH(offHours) : isEmergencyActive ? 'ГАВ' : fmtH(offHours);
+
+        // 1. Основна сітка 8x3
+        const detailContainer = document.getElementById('detailMatrixContainer');
+        if (detailContainer) {
+          clearElement(detailContainer);
+          for (let h = 0; h < 24; h++) {
+            const s0 = h * 2;
+            const s1 = h * 2 + 1;
+            const v0 = arr[s0];
+            const v1 = arr[s1];
+            const isNowHour = h === nowHour;
+            const hourLabel = `${String(h).padStart(2, '0')}:00`;
+
+            let cardClass = 'card-on';
+            let sticker = '💡';
+            let statusTxt = 'СВІТЛО Є';
+            let bar0 = 'is-on';
+            let bar1 = 'is-on';
+
+            if (isSelectedJur) {
+              cardClass = 'card-partial';
+              sticker = '🏢';
+              statusTxt = 'ЮР. ОСОБИ';
+              bar0 = v0 === 1 ? 'is-jur' : 'is-off';
+              bar1 = v1 === 1 ? 'is-jur' : 'is-off';
+            } else if (isEmergencyActive) {
+              cardClass = 'card-off';
+              sticker = '🚨';
+              statusTxt = 'ГАВ';
+              bar0 = 'is-off';
+              bar1 = 'is-off';
+            } else if (v0 === 1 && v1 === 1) {
+              cardClass = 'card-off';
+              sticker = '🕯️';
+              statusTxt = 'НЕМАЄ';
+              bar0 = 'is-off';
+              bar1 = 'is-off';
+            } else if (v0 === 1 || v1 === 1) {
+              cardClass = 'card-partial';
+              sticker = v0 === 1 ? '🕯️' : '💡';
+              statusTxt = 'ЧАСТКОВО';
+              bar0 = v0 === 1 ? 'is-off' : 'is-on';
+              bar1 = v1 === 1 ? 'is-off' : 'is-on';
+            }
+
+            const card = createEl('div', `hour-card ${cardClass} ${isNowHour ? 'is-now' : ''}`);
+            const head = createEl('div', 'hour-card-head');
+            head.appendChild(createEl('span', '', hourLabel));
+            head.appendChild(createEl('span', 'ios-sticker-dark', sticker));
+            head.lastChild.style.fontSize = '16px';
+
+            const stDiv = createEl('div', 'hour-status-text', statusTxt);
+
+            const bottomWrap = createEl('div');
+            const barsRow = createEl('div', 'half-bars-row');
+            barsRow.appendChild(createEl('div', `half-bar ${bar0}`));
+            barsRow.appendChild(createEl('div', `half-bar ${bar1}`));
+
+            const labelsRow = createEl('div', 'half-labels-row');
+            labelsRow.appendChild(createEl('span', '', ':00'));
+            labelsRow.appendChild(createEl('span', '', ':30'));
+
+            bottomWrap.appendChild(barsRow);
+            bottomWrap.appendChild(labelsRow);
+
+            card.appendChild(head);
+            card.appendChild(stDiv);
+            card.appendChild(bottomWrap);
+            detailContainer.appendChild(card);
           }
         }
 
-        if (bcResp.ok) {
-          const remoteBc = await bcResp.json();
-          if (remoteBc && remoteBc.active && remoteBc.id && remoteBc.id !== lastSeenBroadcastId) {
-            showBroadcastPopup(remoteBc);
-          } else if (remoteBc && remoteBc.active === false) {
-            window.closeModal('liveBroadcastPopup');
+        // 2. Зведена таблиця усіх 12 підчерг
+        const headRow = document.getElementById('matrixHoursHeaderRow');
+        if (headRow && headRow.childElementCount === 0) {
+          const stickyTh = createEl('th', 'matrix-sticky-col', 'Черга');
+          stickyTh.style.background = '#18181f';
+          stickyTh.style.color = '#ffffff';
+          headRow.appendChild(stickyTh);
+
+          for (let h = 0; h < 24; h++) {
+            const th = createEl('th', '', String(h).padStart(2, '0'));
+            th.colSpan = 2;
+            th.style.color = '#a1a1aa';
+            th.style.borderLeft = '1px solid #27272f';
+            headRow.appendChild(th);
           }
         }
-      } catch (e) {}
-    }
 
-    function showBroadcastPopup(payload) {
-      if (!payload || !payload.id) return;
-      lastSeenBroadcastId = payload.id;
-      try {
-        localStorage.setItem('zp_svitlo_seen_broadcast_id', payload.id);
-      } catch (e) {}
+        const tbody = document.getElementById('matrixTableBody');
+        if (tbody) {
+          clearElement(tbody);
+          SUBQUEUES.forEach(item => {
+            const q = item.id;
+            const qArr = schedules[q] || new Array(48).fill(0);
+            const isRowSel = q === selectedQueue;
+            const isRowJur = item.isJuridicalOnly && !queue21HasExplicitOutage;
 
-      const isGav = payload.type === 'gav';
-      const cardEl = document.getElementById('liveBroadcastCard');
-      const stickerEl = document.getElementById('popupSticker');
-      const badgeEl = document.getElementById('popupBadge');
+            const tr = createEl('tr');
+            tr.style.cursor = 'pointer';
+            tr.style.background = isRowSel ? 'rgba(255,255,255,0.08)' : 'transparent';
+            tr.addEventListener('click', () => selectQueue(q));
 
-      if (cardEl) {
-        cardEl.style.background = isGav ? '#09090b' : '#ffffff';
-        cardEl.style.color = isGav ? '#ffffff' : '#09090b';
-        cardEl.style.borderColor = isGav ? '#ffffff' : '#09090b';
-      }
-      if (stickerEl) {
-        stickerEl.textContent = isGav ? '🚨' : '📢';
-        stickerEl.className = isGav ? 'ios-sticker-dark' : 'ios-sticker';
-      }
-      if (badgeEl) {
-        badgeEl.textContent = isGav ? 'ZP SVITLO // ЕКСТРЕНА ТРИВОГА ГАВ' : 'ZP SVITLO // ОПОВІЩЕННЯ';
-      }
+            const labelTd = createEl('td', 'matrix-sticky-col', `${q}${isRowJur ? ' (Юр.)' : ''}`);
+            labelTd.style.background = isRowSel ? '#ffffff' : '#18181f';
+            labelTd.style.color = isRowSel ? '#09090b' : '#ffffff';
+            labelTd.style.fontWeight = '800';
+            tr.appendChild(labelTd);
 
-      const bodyEl = document.getElementById('popupBody');
-      if (bodyEl) {
-        bodyEl.style.color = isGav ? '#e4e4e7' : '#27272a';
-      }
+            qArr.forEach((val, idx) => {
+              const td = createEl('td');
+              let cls = 'hatch-on';
+              if (isRowJur) cls = 'hatch-jur';
+              else if (isEmergencyActive || val === 1) cls = 'hatch-off';
 
-      document.getElementById('popupTitle').textContent = payload.title || 'Оперативне сповіщення';
-      document.getElementById('popupBody').textContent = payload.message || '';
-      document.getElementById('popupTime').textContent = payload.timestamp || 'Щойно';
-      window.openModal('liveBroadcastPopup');
-    }
-
-    window.dismissBroadcastPopup = function () {
-      window.closeModal('liveBroadcastPopup');
-    };
-
-    window.sendLiveBroadcast = async function () {
-      const enteredCode = document.getElementById('broadcastPinInput').value.trim();
-      if (enteredCode !== ACCESS_HASH_TARGET) {
-        showToast('🔒', 'Невірний код доступу');
-        return;
-      }
-
-      const msgType = document.getElementById('broadcastTypeInput')?.value || 'info';
-      const customTitle = document.getElementById('broadcastTitleInput')?.value.trim();
-      const msgText = document.getElementById('broadcastBodyInput').value.trim();
-      if (!msgText) {
-        showToast('⚠️', 'Введіть текст повідомлення');
-        return;
-      }
-
-      const now = getKyivNow();
-      const ts = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')} • ${now.toLocaleDateString('uk-UA')}`;
-
-      const payload = {
-        id: 'bc_' + Date.now(),
-        type: msgType,
-        title: customTitle || (msgType === 'gav' ? 'Увага! Аварійні відключення (ГАВ)' : 'ZP SVITLO • Ефір'),
-        message: msgText,
-        timestamp: ts,
-        active: true
-      };
-
-      try {
-        await fetch(`${FIREBASE_DB_URL}/broadcast.json`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-        document.getElementById('broadcastPinInput').value = '';
-        if (document.getElementById('broadcastTitleInput')) document.getElementById('broadcastTitleInput').value = '';
-        document.getElementById('broadcastBodyInput').value = '';
-        window.closeModal('broadcastModal');
-        showBroadcastPopup(payload);
-        showToast('📢', 'Опубліковано для всіх');
-      } catch (e) {
-        showToast('⚠️', 'Помилка зʼєднання з сервером');
-      }
-    };
-
-    window.clearActiveBroadcast = async function () {
-      const enteredCode = document.getElementById('broadcastPinInput').value.trim();
-      if (enteredCode !== ACCESS_HASH_TARGET) {
-        showToast('🔒', 'Невірний код доступу');
-        return;
-      }
-
-      try {
-        await fetch(`${FIREBASE_DB_URL}/broadcast.json`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ active: false, clearedAt: Date.now() })
-        });
-        document.getElementById('broadcastPinInput').value = '';
-        window.closeModal('broadcastModal');
-        window.closeModal('liveBroadcastPopup');
-        showToast('✅', 'Активне сповіщення знято');
-      } catch (e) {
-        showToast('⚠️', 'Помилка зʼєднання з сервером');
-      }
-    };
-
-    // =========================================================================
-    // 7. АВТОПАРСЕР TELEGRAM (@Zaporizhzhyaoblenergo_news)
-    // =========================================================================
-    async function fetchViaCorsProxies(targetUrl) {
-      const cacheBust = `${targetUrl}${targetUrl.includes('?') ? '&' : '?'}_t=${Date.now()}`;
-      const proxies = [
-        `https://api.allorigins.win/raw?url=${encodeURIComponent(cacheBust)}`,
-        `https://corsproxy.io/?${encodeURIComponent(cacheBust)}`,
-        `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(cacheBust)}`
-      ];
-      for (const proxyUrl of proxies) {
-        try {
-          const controller = new AbortController();
-          const timer = setTimeout(() => controller.abort(), 6500);
-          const resp = await fetch(proxyUrl, { signal: controller.signal });
-          clearTimeout(timer);
-          if (resp.ok) {
-            const txt = await resp.text();
-            if (txt && txt.length > 100) return txt;
-          }
-        } catch (e) {}
-      }
-      return null;
-    }
-
-    window.syncWithSources = async function (manual = false) {
-      const statusLbl = document.getElementById('syncStatusText');
-      const now = getKyivNow();
-      const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-
-      try {
-        const tgNewsHtml = await fetchViaCorsProxies('https://t.me/s/Zaporizhzhyaoblenergo_news');
-        if (tgNewsHtml) {
-          const doc = new DOMParser().parseFromString(tgNewsHtml, 'text/html');
-          const msgWraps = [...doc.querySelectorAll('.tgme_widget_message_wrap')].slice(-8).reverse();
-          let updatedFromPost = false;
-
-          for (const wrap of msgWraps) {
-            const textNode = wrap.querySelector('.tgme_widget_message_text');
-            if (!textNode) continue;
-            const txt = textNode.innerText.trim();
-            const parsed = extractSchedulesFromZoeText(txt);
-            if (parsed) {
-              const postId = wrap.querySelector('.tgme_widget_message')?.getAttribute('data-post') || '';
-              const timeNode = wrap.querySelector('time.time');
-              const postTime = timeNode ? timeNode.textContent.trim() : timeStr;
-              const sig = `${postId}::${txt.replace(/\s+/g, ' ').slice(0, 220)}`;
-
-              if (sig !== lastProcessedSignature) {
-                lastProcessedSignature = sig;
-                applyParsedResult(parsed, `@Zaporizhzhyaoblenergo_news (${postTime})`, true);
-                if (manual) showToast('⚡', `Оновлено з TG (${postTime})`);
-              } else if (manual) {
-                showToast('📡', `Графік у каналі актуальний (${postTime})`);
+              const cellDiv = createEl('div', cls);
+              cellDiv.style.height = '20px';
+              cellDiv.style.borderRadius = '3px';
+              if (idx === nowSlot) {
+                cellDiv.style.outline = '1.5px solid #ffffff';
+                cellDiv.style.outlineOffset = '-1px';
               }
-              updatedFromPost = true;
-              break;
-            }
-          }
+              if (isRowJur && val === 0) {
+                cellDiv.style.opacity = '0.35';
+              }
+              td.appendChild(cellDiv);
+              tr.appendChild(td);
+            });
 
-          if (statusLbl) statusLbl.textContent = `TG + CLOUD • ${timeStr}`;
-          if (!updatedFromPost && manual) {
-            triggerScanEffect();
-            showToast('📡', 'Перевірено TG — нових змін немає');
-          }
+            tbody.appendChild(tr);
+          });
+        }
+      }
+
+      function updateRealtimeTelemetry() {
+        const now = getKyivNow();
+        const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+
+        const splashClock = document.getElementById('splashClock');
+        if (splashClock) splashClock.textContent = timeStr;
+        const liveClock = document.getElementById('liveClock');
+        if (liveClock) liveClock.textContent = timeStr;
+
+        const meta = getQueueMeta(selectedQueue);
+        const isSelectedJur = meta.isJuridicalOnly && !queue21HasExplicitOutage;
+        document.getElementById('heroQueueBadge').textContent = meta.short.toUpperCase();
+
+        const titleEl = document.getElementById('heroStatusTitle');
+        const subEl = document.getElementById('heroStatusSubtitle');
+        const stickerEl = document.getElementById('heroSticker');
+        const cdLabel = document.getElementById('countdownLabel');
+        const cdTimer = document.getElementById('countdownTimer');
+        const nextTimeEl = document.getElementById('nextEventTime');
+        const progBar = document.getElementById('intervalProgressBar');
+        const startLbl = document.getElementById('intervalStartLabel');
+        const endLbl = document.getElementById('intervalEndLabel');
+        const pctLbl = document.getElementById('intervalPercentLabel');
+
+        if (isSelectedJur) {
+          titleEl.textContent = 'Юридичні споживачі';
+          subEl.textContent = 'НАСЕЛЕННЯ НЕ ЗАДІЯНЕ';
+          stickerEl.textContent = '🏢';
+          cdLabel.textContent = 'СТАТУС ДЛЯ НАСЕЛЕННЯ:';
+          cdTimer.textContent = 'Не застосовується';
+          nextTimeEl.textContent = 'Тільки юр. особи';
+          progBar.style.width = '100%';
+          startLbl.textContent = 'КАТЕГОРІЯ: ЮР. ОСОБИ';
+          endLbl.textContent = 'М. ЗАПОРІЖЖЯ';
+          pctLbl.textContent = '—';
           return;
         }
 
-        if (statusLbl) statusLbl.textContent = `CLOUD SYNC • ${timeStr}`;
-        if (manual) showToast('⚡', 'Синхронізовано з базою');
-      } catch (e) {}
-    };
+        if (isEmergencyActive) {
+          titleEl.textContent = 'АВАРІЙНЕ ВІДКЛЮЧЕННЯ';
+          subEl.textContent = 'ДІЮТЬ ГАВ / СГАВ • ПОГОДИННИЙ ГРАФІК НЕ ДІЄ';
+          stickerEl.textContent = '🚨';
+          cdLabel.textContent = 'РЕЖИМ ОБМЕЖЕНЬ:';
+          cdTimer.textContent = 'ГАВ / СГАВ';
+          nextTimeEl.textContent = 'До відбою';
+          progBar.style.width = '100%';
+          startLbl.textContent = 'СТАТУС: ЕКСТРЕНИЙ';
+          endLbl.textContent = 'М. ЗАПОРІЖЖЯ';
+          pctLbl.textContent = 'LIVE';
+          return;
+        }
 
-    function copyTextSafe(text, successMsg) {
-      const ta = document.createElement('textarea');
-      ta.value = text;
-      ta.style.position = 'fixed';
-      ta.style.opacity = '0';
-      document.body.appendChild(ta);
-      ta.select();
-      try {
-        document.execCommand('copy');
-        showToast('📋', successMsg);
-      } catch (e) {
-        showToast('⚠️', 'Не вдалося скопіювати');
+        const arr = schedules[selectedQueue] || new Array(48).fill(0);
+        const nowSlot = getCurrentSlotIndex();
+        const curState = arr[nowSlot];
+
+        if (curState === 0) {
+          titleEl.textContent = 'СВІТЛО Є';
+          subEl.textContent = 'ЗА ПОГОДИННИМ ГРАФІКОМ (ГПВ)';
+          stickerEl.textContent = '⚡';
+          cdLabel.textContent = 'ДО ВІДКЛЮЧЕННЯ:';
+        } else {
+          titleEl.textContent = 'ВІДКЛЮЧЕННЯ (ГПВ)';
+          subEl.textContent = 'ПЛАНОВЕ ПОГОДИННЕ ОБМЕЖЕННЯ';
+          stickerEl.textContent = '🕯️';
+          cdLabel.textContent = 'ДО ВКЛЮЧЕННЯ:';
+        }
+
+        let stepsForward = 1;
+        while (stepsForward <= 48 && arr[(nowSlot + stepsForward) % 48] === curState) {
+          stepsForward++;
+        }
+
+        let stepsBack = 0;
+        while (stepsBack < 48 && arr[(nowSlot - stepsBack - 1 + 48) % 48] === curState) {
+          stepsBack++;
+        }
+
+        if (stepsForward > 48) {
+          cdTimer.textContent = '24:00:00';
+          nextTimeEl.textContent = 'Без змін';
+          progBar.style.width = '100%';
+          startLbl.textContent = '00:00';
+          endLbl.textContent = '24:00';
+          pctLbl.textContent = '100%';
+          return;
+        }
+
+        const startSlot = (nowSlot - stepsBack + 48) % 48;
+        const endSlotTotal = nowSlot + stepsForward;
+        const endTimeStr = endSlotTotal % 48 === 0 && endSlotTotal > 0 ? '24:00' : slotIndexToTime(endSlotTotal);
+
+        const nowSecondsOfDay = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+        const targetSecondsOfDay = endSlotTotal * 1800;
+        let diffSec = targetSecondsOfDay - nowSecondsOfDay;
+        if (diffSec < 0) diffSec += 86400;
+
+        const remH = Math.floor(diffSec / 3600);
+        const remM = Math.floor((diffSec % 3600) / 60);
+        const remS = diffSec % 60;
+
+        cdTimer.textContent = `${String(remH).padStart(2, '0')}:${String(remM).padStart(2, '0')}:${String(remS).padStart(2, '0')}`;
+        nextTimeEl.textContent = `${curState === 0 ? 'Вимкнення о' : 'Включення о'} ${endTimeStr}`;
+
+        const totalIntervalSec = (stepsBack + stepsForward) * 1800;
+        const elapsedSec = totalIntervalSec - diffSec;
+        const pct = Math.max(2, Math.min(99, Math.round((elapsedSec / totalIntervalSec) * 100)));
+
+        progBar.style.width = `${pct}%`;
+        startLbl.textContent = `ПОЧАТОК: ${slotIndexToTime(startSlot)}`;
+        endLbl.textContent = `КІНЕЦЬ: ${endTimeStr}`;
+        pctLbl.textContent = `${pct}%`;
       }
-      document.body.removeChild(ta);
-    }
 
-    window.copyScheduleToClipboard = function () {
-      const meta = getQueueMeta(selectedQueue);
-      const intervals = formatIntervalsFromSlots(schedules[selectedQueue] || []);
-      const text = `⚡ ZP SVITLO\n${meta.label}\nВідключення: ${intervals.join(', ') || 'немає'}\nДжерело: t.me/Zaporizhzhyaoblenergo_news`;
-      copyTextSafe(text, 'Графік скопійовано');
-    };
+      function copyCurrentSchedule() {
+        const meta = getQueueMeta(selectedQueue);
+        const intervals = formatIntervalsFromSlots(schedules[selectedQueue] || []);
+        const text = `⚡ ZP SVITLO | ${meta.label}\nВідключення: ${intervals.length ? intervals.join(', ') : 'не заплановано'}`;
 
-    // =========================================================================
-    // 8. ІНІЦІАЛІЗАЦІЯ ТА ЗАПУСК ЦИКЛІВ СИНХРОНІЗАЦІЇ
-    // =========================================================================
-    document.addEventListener('DOMContentLoaded', () => {
-      const enterBtn = document.getElementById('enterAppBtn');
-      if (enterBtn) {
-        enterBtn.addEventListener('click', window.enterApp);
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        try {
+          document.execCommand('copy');
+          showToast('📋', 'Графік скопійовано у буфер обміну');
+        } catch (e) {
+          showToast('⚠️', 'Не вдалося скопіювати');
+        }
+        document.body.removeChild(ta);
       }
-    });
 
-    initActualSchedules();
-    renderQueueButtons();
-    renderScheduleMatrix();
-    updateRealtimeTelemetry();
-
-    pollFirebaseState();
-    window.syncWithSources(false);
-
-    setInterval(pollFirebaseState, 5000);
-    setInterval(() => window.syncWithSources(false), 30000);
-    setInterval(updateRealtimeTelemetry, 1000);
-
-    let lastCheckedSlot = getCurrentSlotIndex();
-    setInterval(() => {
-      const currentSlot = getCurrentSlotIndex();
-      if (currentSlot !== lastCheckedSlot) {
-        lastCheckedSlot = currentSlot;
+      // =========================================================================
+      // 4. ПАРСИНГ ГРАФІКІВ (ТЕКСТ ТА HTML-ТАБЛИЦІ)
+      // =========================================================================
+      function toggleEmergencyMode(active) {
+        isEmergencyActive = active;
+        const banner = document.getElementById('emergencyBanner');
+        if (banner) {
+          if (active) {
+            document.getElementById('gavTitle').textContent = emergencyMessage.title;
+            document.getElementById('gavDesc').textContent = emergencyMessage.desc;
+            document.getElementById('gavTimeBadge').textContent = emergencyMessage.time;
+            banner.classList.remove('hidden');
+          } else {
+            banner.classList.add('hidden');
+          }
+        }
         renderQueueButtons();
         renderScheduleMatrix();
+        updateRealtimeTelemetry();
       }
-    }, 10000);
+
+      function parseIntervalsFromString(str) {
+        const cleaned = str
+          .replace(/\u00A0/g, ' ')
+          .replace(/[–—−]/g, '-')
+          .replace(/(\d{1,2})\.(\d{2})(?=\s*[-до])/g, '$1:$2')
+          .replace(/([-до]\s*)(\d{1,2})\.(\d{2})/g, '$1$2:$3')
+          .replace(/з\s+(\d{1,2}:\d{2})\s+до\s+(\d{1,2}:\d{2})/gi, '$1-$2');
+
+        const regex = /(\d{1,2}):(\d{2})\s*-\s*(\d{1,2}):(\d{2})/g;
+        const res = [];
+        let m;
+        while ((m = regex.exec(cleaned)) !== null) {
+          const sH = parseInt(m[1], 10);
+          const sM = parseInt(m[2], 10);
+          const eH = parseInt(m[3], 10);
+          const eM = parseInt(m[4], 10);
+          if (sH > 24 || eH > 24) continue;
+          const sSlot = sH * 2 + (sM >= 30 ? 1 : 0);
+          let eSlot = eH * 2 + (eM >= 30 ? 1 : 0);
+          if (eH === 0 && eM === 0 && sSlot > 0) eSlot = 48;
+          if (eH === 23 && eM >= 50) eSlot = 48;
+          if (eSlot > sSlot) res.push([sSlot, eSlot]);
+        }
+        return res;
+      }
+
+      function extractSchedulesFromText(rawText, baseMap = schedules) {
+        if (!rawText || typeof rawText !== 'string') return null;
+        const lower = rawText.toLowerCase();
+
+        const hasEmergency =
+          lower.includes('гав') ||
+          lower.includes('сгав') ||
+          lower.includes('графіки аварійних відключень') ||
+          lower.includes('аварійні відключення');
+
+        const isCancelledEmergency =
+          lower.includes('скасовано') ||
+          lower.includes('відмінено') ||
+          lower.includes('повернення до гпв') ||
+          lower.includes('дія гав припинена');
+
+        const normalized = rawText
+          .replace(/\u00A0/g, ' ')
+          .replace(/[–—−]/g, '-')
+          .replace(/Підчерга\s*([1-6]\.[1-2])/gi, '$1')
+          .replace(/Черга\s*([1-6])\s*[\(,]\s*підчерга\s*([1-2])\s*\)?/gi, '$1.$2')
+          .replace(/Черга\s*([1-6]\.[1-2])/gi, '$1')
+          .replace(/([1-2])\s*підчерга\s*([1-6])\s*черги/gi, '$2.$1');
+
+        const lines = normalized.split(/\n+/);
+        const updatedQueues = Object.create(null);
+        let foundCount = 0;
+
+        lines.forEach(line => {
+          const qMatches = [...line.matchAll(/(?:^|[^\d.])([1-6]\.[1-2])(?![\d.])/g)];
+          if (qMatches.length > 0) {
+            const intervals = parseIntervalsFromString(line);
+            if (intervals.length > 0) {
+              qMatches.forEach(qm => {
+                const q = qm[1];
+                const qSlots = new Array(48).fill(0);
+                intervals.forEach(([s, e]) => {
+                  for (let i = s; i < e && i < 48; i++) qSlots[i] = 1;
+                });
+                updatedQueues[q] = qSlots;
+                foundCount++;
+              });
+            } else if (
+              line.toLowerCase().includes('без відключень') ||
+              line.toLowerCase().includes('не вимикатиметься') ||
+              line.toLowerCase().includes('не задія') ||
+              line.toLowerCase().includes('скасовано')
+            ) {
+              qMatches.forEach(qm => {
+                updatedQueues[qm[1]] = new Array(48).fill(0);
+                foundCount++;
+              });
+            }
+          }
+        });
+
+        if (foundCount > 0) {
+          const isPartial =
+            foundCount < 6 ||
+            lower.includes('зміни') ||
+            lower.includes('оновлено') ||
+            lower.includes('оновлений') ||
+            lower.includes('скориговано') ||
+            lower.includes('коригування');
+
+          const merged = Object.create(null);
+          ALL_QUEUES.forEach(q => {
+            if (updatedQueues[q]) merged[q] = updatedQueues[q];
+            else if (isPartial && Array.isArray(baseMap[q])) merged[q] = [...baseMap[q]];
+            else merged[q] = new Array(48).fill(0);
+          });
+
+          const explicit21 = Boolean(
+            updatedQueues['2.1'] &&
+            updatedQueues['2.1'].some(v => v === 1) &&
+            !lower.includes('населення не задіяне')
+          );
+
+          return {
+            type: 'schedule_update',
+            schedules: merged,
+            updatedCount: foundCount,
+            explicitQueue21: explicit21,
+            text: rawText
+          };
+        }
+
+        if (hasEmergency) {
+          return {
+            type: isCancelledEmergency ? 'emergency_off' : 'emergency_on',
+            text: rawText
+          };
+        }
+
+        return null;
+      }
+
+      function extractSchedulesFromHtmlDocument(doc, baseMap = schedules) {
+        if (!doc) return null;
+        const tableQueues = Object.create(null);
+        let foundTables = 0;
+
+        const tables = [...doc.querySelectorAll('table')];
+        for (const tbl of tables) {
+          const rows = [...tbl.querySelectorAll('tr')];
+          for (const tr of rows) {
+            const cells = [...tr.querySelectorAll('th, td')].map(c => c.textContent.trim());
+            if (cells.length < 2) continue;
+            const rowText = cells.join(' ');
+            const qMatches = [...rowText.matchAll(/(?:^|[^\d.])([1-6]\.[1-2])(?![\d.])/g)];
+            if (qMatches.length > 0) {
+              const intervals = parseIntervalsFromString(rowText);
+              if (intervals.length > 0) {
+                qMatches.forEach(qm => {
+                  const q = qm[1];
+                  const qSlots = new Array(48).fill(0);
+                  intervals.forEach(([s, e]) => {
+                    for (let i = s; i < e && i < 48; i++) qSlots[i] = 1;
+                  });
+                  tableQueues[q] = qSlots;
+                  foundTables++;
+                });
+              } else if (/не\s*задія|без\s*відключень|скасовано/i.test(rowText)) {
+                qMatches.forEach(qm => {
+                  tableQueues[qm[1]] = new Array(48).fill(0);
+                  foundTables++;
+                });
+              }
+            }
+          }
+        }
+
+        const contentRoot = doc.querySelector('.entry-content, article, main') || doc.body;
+        const rawText = contentRoot ? contentRoot.textContent : '';
+        const textParsed = extractSchedulesFromText(rawText, baseMap);
+
+        if (foundTables > 0) {
+          const merged = Object.create(null);
+          ALL_QUEUES.forEach(q => {
+            if (tableQueues[q]) merged[q] = tableQueues[q];
+            else if (textParsed && textParsed.schedules && textParsed.schedules[q]) merged[q] = textParsed.schedules[q];
+            else if (Array.isArray(baseMap[q])) merged[q] = [...baseMap[q]];
+            else merged[q] = new Array(48).fill(0);
+          });
+          const explicit21 = Boolean(tableQueues['2.1'] && tableQueues['2.1'].some(v => v === 1));
+          return {
+            type: 'schedule_update',
+            schedules: merged,
+            updatedCount: foundTables,
+            explicitQueue21: explicit21,
+            text: rawText
+          };
+        }
+
+        return textParsed;
+      }
+
+      // =========================================================================
+      // 5. ХМАРНА СИНХРОНІЗАЦІЯ FIREBASE (З ВАЛІДАЦІЄЮ ТА ЗАХИСТОМ ЗАПИСУ)
+      // =========================================================================
+      async function pushScheduleToFirebase(authHash, postKey = '') {
+        try {
+          const booleanMap = {};
+          const cleanSchedules = {};
+          ALL_QUEUES.forEach(q => {
+            const arr = schedules[q] || new Array(48).fill(0);
+            cleanSchedules[q] = arr.map(v => (v === 1 ? 1 : 0));
+            booleanMap[q] = arr.map(v => v === 0);
+          });
+
+          const payload = {
+            authHash,
+            queues: booleanMap,
+            schedules: cleanSchedules,
+            gav: Boolean(isEmergencyActive),
+            isEmergencyActive: Boolean(isEmergencyActive),
+            emergencyMessage: {
+              title: sanitizeText(emergencyMessage.title, 140),
+              desc: sanitizeText(emergencyMessage.desc, 300),
+              time: sanitizeText(emergencyMessage.time, 32)
+            },
+            queue21HasExplicitOutage: Boolean(queue21HasExplicitOutage),
+            sourcePostId: sanitizeText(postKey, 160),
+            updatedAt: lastScheduleUpdatedAt
+          };
+
+          ALL_QUEUES.forEach(q => {
+            payload[q] = booleanMap[q];
+          });
+
+          const resp = await fetch(`${FIREBASE_DB_URL}/schedule.json`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+
+          return { ok: resp.ok, status: resp.status };
+        } catch (e) {
+          return { ok: false, status: 0 };
+        }
+      }
+
+      function applyRemoteScheduleObject(remote) {
+        if (!isSafeObject(remote)) return;
+        const remoteTs = Number(remote.updatedAt) || 0;
+        if (remoteTs <= lastScheduleUpdatedAt) return;
+
+        lastScheduleUpdatedAt = remoteTs;
+
+        if (isSafeObject(remote.schedules)) {
+          ALL_QUEUES.forEach(q => {
+            if (Array.isArray(remote.schedules[q]) && remote.schedules[q].length === 48) {
+              schedules[q] = remote.schedules[q].map(v => (v === 1 ? 1 : 0));
+            }
+          });
+        } else {
+          const src = isSafeObject(remote.queues) ? remote.queues : remote;
+          ALL_QUEUES.forEach(q => {
+            if (Array.isArray(src[q]) && src[q].length === 48) {
+              schedules[q] = src[q].map(v => (v === false || v === 1 ? 1 : 0));
+            }
+          });
+        }
+
+        if (typeof remote.queue21HasExplicitOutage === 'boolean') {
+          queue21HasExplicitOutage = remote.queue21HasExplicitOutage;
+        }
+        if (isSafeObject(remote.emergencyMessage)) {
+          emergencyMessage = {
+            title: sanitizeText(remote.emergencyMessage.title, 140) || emergencyMessage.title,
+            desc: sanitizeText(remote.emergencyMessage.desc, 300) || emergencyMessage.desc,
+            time: sanitizeText(remote.emergencyMessage.time, 32) || 'LIVE'
+          };
+        }
+
+        toggleEmergencyMode(Boolean(remote.isEmergencyActive || remote.gav));
+        persistSchedulesLocally();
+      }
+
+      function applyRemoteConfigObject(cfg) {
+        if (!isSafeObject(cfg)) return;
+        const cfgTs = Number(cfg.updatedAt) || 0;
+        if (cfgTs < lastConfigUpdatedAt) return;
+        lastConfigUpdatedAt = cfgTs;
+
+        const norm = normalizeTelegramUrl(cfg.tgUrl);
+        if (norm) {
+          activeTgChannelUrl = norm;
+          try { localStorage.setItem('zp_svitlo_tg_url', norm); } catch (e) {}
+        }
+      }
+
+      function handleIncomingBroadcast(bc) {
+        if (!isSafeObject(bc)) return;
+        if (bc.active === false) {
+          activeBroadcastData = null;
+          closeModal('liveBroadcastPopup');
+          return;
+        }
+        if (bc.active === true && bc.id) {
+          const bcIdStr = sanitizeText(String(bc.id), 40);
+          if (!bcIdStr || bcIdStr === dismissedBroadcastId) return;
+          if (activeBroadcastData && String(activeBroadcastData.id) === bcIdStr) return;
+
+          activeBroadcastData = bc;
+          const isGav = bc.type === 'gav';
+          const card = document.getElementById('liveBroadcastCard');
+          card.classList.toggle('is-gav', isGav);
+
+          document.getElementById('popupTypeBadge').textContent = isGav
+            ? '🚨 УВАГА • ЕКСТРЕНИЙ ЕФІР (ГАВ)'
+            : '📢 ПРЯМИЙ ЕФІР • ZP SVITLO';
+          document.getElementById('popupSticker').textContent = isGav ? '🚨' : '📢';
+          document.getElementById('popupTitle').textContent = sanitizeText(bc.title, 120) || 'Повідомлення моніторингу';
+          document.getElementById('popupBody').textContent = sanitizeText(bc.text, 600);
+
+          if (bc.ts) {
+            const d = new Date(String(bc.ts));
+            if (!isNaN(d.getTime())) {
+              document.getElementById('popupTimeLabel').textContent =
+                `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+            }
+          }
+
+          if (navigator.vibrate) {
+            try { navigator.vibrate([180, 80, 180]); } catch (e) {}
+          }
+          openModal('liveBroadcastPopup');
+        }
+      }
+
+      function dismissBroadcastPopup() {
+        if (activeBroadcastData && activeBroadcastData.id) {
+          dismissedBroadcastId = sanitizeText(String(activeBroadcastData.id), 40);
+          try { localStorage.setItem('zp_svitlo_dismissed_bc', dismissedBroadcastId); } catch (e) {}
+        }
+        closeModal('liveBroadcastPopup');
+      }
+
+      function initFirebaseRealtimeStreams() {
+        if (typeof EventSource === 'undefined') return;
+
+        try {
+          const bcStream = new EventSource(`${FIREBASE_DB_URL}/broadcast.json`);
+          const onBc = (ev) => {
+            try {
+              const parsed = JSON.parse(ev.data);
+              if (isSafeObject(parsed) && parsed.data !== undefined) {
+                handleIncomingBroadcast(parsed.data);
+              }
+            } catch (e) {}
+          };
+          bcStream.addEventListener('put', onBc);
+          bcStream.addEventListener('patch', onBc);
+        } catch (e) {}
+
+        try {
+          const schedStream = new EventSource(`${FIREBASE_DB_URL}/schedule.json`);
+          const onSched = (ev) => {
+            try {
+              const parsed = JSON.parse(ev.data);
+              if (isSafeObject(parsed) && parsed.path === '/' && parsed.data) {
+                applyRemoteScheduleObject(parsed.data);
+              } else if (isSafeObject(parsed) && parsed.path && parsed.path !== '/') {
+                pollFirebaseSnapshot();
+              }
+            } catch (e) {}
+          };
+          schedStream.addEventListener('put', onSched);
+          schedStream.addEventListener('patch', onSched);
+        } catch (e) {}
+      }
+
+      async function pollFirebaseSnapshot() {
+        try {
+          const [schedRes, cfgRes, bcRes] = await Promise.all([
+            fetch(`${FIREBASE_DB_URL}/schedule.json?_t=${Date.now()}`, { cache: 'no-store' }),
+            fetch(`${FIREBASE_DB_URL}/config.json?_t=${Date.now()}`, { cache: 'no-store' }),
+            fetch(`${FIREBASE_DB_URL}/broadcast.json?_t=${Date.now()}`, { cache: 'no-store' })
+          ]);
+
+          if (schedRes.ok) applyRemoteScheduleObject(await schedRes.json());
+          if (cfgRes.ok) applyRemoteConfigObject(await cfgRes.json());
+          if (bcRes.ok) handleIncomingBroadcast(await bcRes.json());
+        } catch (e) {}
+      }
+
+      // =========================================================================
+      // 6. ДІЇ АДМІНІСТРАТОРА В «ЕФІР 📢»
+      // =========================================================================
+      function previewManualScheduleText() {
+        const raw = document.getElementById('manualZoeTextInput').value.trim();
+        const box = document.getElementById('manualPreviewBox');
+        if (!raw) {
+          box.classList.add('hidden');
+          return;
+        }
+        const parsed = extractSchedulesFromText(raw, schedules);
+        box.classList.remove('hidden');
+        if (!parsed) {
+          box.textContent = 'Не знайдено черг (формат: 5.2: 04:00 – 09:00)';
+        } else if (parsed.type === 'emergency_on') {
+          box.textContent = 'Розпізнано: Активація ГАВ / СГАВ';
+        } else if (parsed.type === 'emergency_off') {
+          box.textContent = 'Розпізнано: Скасування ГАВ';
+        } else {
+          const sample = formatIntervalsFromSlots(parsed.schedules[selectedQueue] || []).join(', ') || 'без відключень';
+          box.textContent = `Розпізнано черг: ${parsed.updatedCount} • Для ${selectedQueue}: ${sample}`;
+        }
+      }
+
+      async function handlePublishManualSchedule() {
+        const auth = await verifyAdminCode(document.getElementById('broadcastPinInput').value);
+        if (!auth.ok) {
+          showFeedbackBox(`❌ ${auth.reason}`, false);
+          return;
+        }
+
+        const raw = document.getElementById('manualZoeTextInput').value.trim();
+        if (!raw) {
+          showFeedbackBox('❌ Вставте текст графіка', false);
+          return;
+        }
+
+        const parsed = extractSchedulesFromText(raw, schedules);
+        if (!parsed) {
+          showFeedbackBox('❌ Не вдалося розпізнати черги у тексті', false);
+          return;
+        }
+
+        lastScheduleUpdatedAt = Date.now();
+        if (parsed.type === 'emergency_on') {
+          emergencyMessage = {
+            title: 'У Запоріжжі діють графіки аварійних відключень (ГАВ / СГАВ)',
+            desc: sanitizeText(parsed.text, 250),
+            time: 'LIVE'
+          };
+          toggleEmergencyMode(true);
+        } else if (parsed.type === 'emergency_off') {
+          toggleEmergencyMode(false);
+        } else if (parsed.type === 'schedule_update') {
+          queue21HasExplicitOutage = Boolean(parsed.explicitQueue21);
+          toggleEmergencyMode(false);
+          schedules = parsed.schedules;
+          renderQueueButtons();
+          renderScheduleMatrix();
+          updateRealtimeTelemetry();
+        }
+        persistSchedulesLocally();
+
+        const cloudRes = await pushScheduleToFirebase(auth.hash, 'manual_' + lastScheduleUpdatedAt);
+        if (cloudRes.ok) {
+          showFeedbackBox('✅ Новий графік опубліковано для всіх користувачів!', true);
+          document.getElementById('manualZoeTextInput').value = '';
+          document.getElementById('manualPreviewBox').classList.add('hidden');
+        } else if (cloudRes.status === 401 || cloudRes.status === 403) {
+          showFeedbackBox('❌ Помилка доступу Firebase (401): перевірте Firebase Rules', false);
+        } else {
+          showFeedbackBox('⚠️ Графік застосовано локально (помилка мережі Firebase)', false);
+        }
+      }
+
+      async function handleSaveTgChannel() {
+        const auth = await verifyAdminCode(document.getElementById('broadcastPinInput').value);
+        if (!auth.ok) {
+          showFeedbackBox(`❌ ${auth.reason}`, false);
+          return;
+        }
+
+        const rawUrl = document.getElementById('tgChannelUrlInput').value;
+        const normUrl = normalizeTelegramUrl(rawUrl);
+        if (!normUrl) {
+          showFeedbackBox('❌ Вкажіть коректне посилання формату https://t.me/...', false);
+          return;
+        }
+
+        activeTgChannelUrl = normUrl;
+        lastConfigUpdatedAt = Date.now();
+        try { localStorage.setItem('zp_svitlo_tg_url', normUrl); } catch (e) {}
+
+        try {
+          const resp = await fetch(`${FIREBASE_DB_URL}/config.json`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              authHash: auth.hash,
+              tgUrl: normUrl,
+              updatedAt: lastConfigUpdatedAt
+            })
+          });
+
+          if (resp.ok) {
+            showFeedbackBox('✅ Telegram-канал оновлено для всіх користувачів!', true);
+            syncWithSources(true);
+          } else {
+            showFeedbackBox(`❌ Помилка запису у Firebase (HTTP ${resp.status})`, false);
+          }
+        } catch (e) {
+          showFeedbackBox('❌ Помилка мережі при збереженні конфігурації', false);
+        }
+      }
+
+      async function handleSendBroadcast() {
+        const auth = await verifyAdminCode(document.getElementById('broadcastPinInput').value);
+        if (!auth.ok) {
+          showFeedbackBox(`❌ ${auth.reason}`, false);
+          return;
+        }
+
+        const type = document.getElementById('broadcastTypeInput').value === 'gav' ? 'gav' : 'info';
+        const title = sanitizeText(document.getElementById('broadcastTitleInput').value, 120) || 'Важливе сповіщення';
+        const text = sanitizeText(document.getElementById('broadcastBodyInput').value, 600);
+
+        if (!text) {
+          showFeedbackBox('❌ Введіть текст повідомлення', false);
+          return;
+        }
+
+        const payload = {
+          authHash: auth.hash,
+          id: Date.now(),
+          type,
+          title,
+          text,
+          active: true,
+          ts: new Date().toISOString()
+        };
+
+        try {
+          const resp = await fetch(`${FIREBASE_DB_URL}/broadcast.json`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+
+          if (resp.ok) {
+            showFeedbackBox('✅ Сповіщення розіслано всім користувачам!', true);
+            document.getElementById('broadcastTitleInput').value = '';
+            document.getElementById('broadcastBodyInput').value = '';
+            if (type === 'gav') {
+              emergencyMessage = { title, desc: text, time: 'LIVE' };
+              toggleEmergencyMode(true);
+            }
+            handleIncomingBroadcast(payload);
+          } else {
+            showFeedbackBox(`❌ Помилка сервера Firebase (HTTP ${resp.status})`, false);
+          }
+        } catch (e) {
+          showFeedbackBox('❌ Помилка мережі', false);
+        }
+      }
+
+      async function handleClearBroadcast() {
+        const auth = await verifyAdminCode(document.getElementById('broadcastPinInput').value);
+        if (!auth.ok) {
+          showFeedbackBox(`❌ ${auth.reason}`, false);
+          return;
+        }
+
+        try {
+          const resp = await fetch(`${FIREBASE_DB_URL}/broadcast.json`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              authHash: auth.hash,
+              active: false,
+              clearedAt: new Date().toISOString()
+            })
+          });
+
+          if (resp.ok) {
+            activeBroadcastData = null;
+            closeModal('liveBroadcastPopup');
+            showFeedbackBox('✅ Активний ефір знято', true);
+          } else {
+            showFeedbackBox(`❌ Помилка сервера Firebase (HTTP ${resp.status})`, false);
+          }
+        } catch (e) {
+          showFeedbackBox('❌ Помилка мережі', false);
+        }
+      }
+
+      // =========================================================================
+      // 7. ФОНОВИЙ АВТОПАРСЕР (БЕЗ ВИВОДУ ПЛАШОК ДЖЕРЕЛ В ІНТЕРФЕЙС)
+      // =========================================================================
+      async function fetchUrlFastRace(targetUrl) {
+        const busted = `${targetUrl}${targetUrl.includes('?') ? '&' : '?'}_t=${Date.now()}`;
+        const proxies = [
+          async () => {
+            const r = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(busted)}`, { cache: 'no-store' });
+            if (!r.ok) throw new Error('err');
+            const t = await r.text();
+            if (!t || t.length < 150) throw new Error('empty');
+            return t;
+          },
+          async () => {
+            const r = await fetch(`https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(busted)}`, { cache: 'no-store' });
+            if (!r.ok) throw new Error('err');
+            const t = await r.text();
+            if (!t || t.length < 150) throw new Error('empty');
+            return t;
+          },
+          async () => {
+            const r = await fetch(`https://corsproxy.io/?${encodeURIComponent(busted)}`, { cache: 'no-store' });
+            if (!r.ok) throw new Error('err');
+            const t = await r.text();
+            if (!t || t.length < 150) throw new Error('empty');
+            return t;
+          },
+          async () => {
+            const r = await fetch(`https://thingproxy.freeboard.io/fetch/${busted}`, { cache: 'no-store' });
+            if (!r.ok) throw new Error('err');
+            const t = await r.text();
+            if (!t || t.length < 150) throw new Error('empty');
+            return t;
+          }
+        ];
+
+        try {
+          return await Promise.any(proxies.map(fn => fn()));
+        } catch (e) {
+          return null;
+        }
+      }
+
+      async function syncWithSources(manual = false) {
+        if (isSyncInProgress) return;
+        isSyncInProgress = true;
+        setSyncSpinning(true);
+
+        try {
+          await pollFirebaseSnapshot();
+
+          const safeTgUrl = normalizeTelegramUrl(activeTgChannelUrl) || DEFAULT_TG_URL;
+          const tgHtml = await fetchUrlFastRace(safeTgUrl);
+          if (tgHtml) {
+            const doc = new DOMParser().parseFromString(tgHtml, 'text/html');
+            const wraps = [...doc.querySelectorAll('.tgme_widget_message_wrap')].slice(-6);
+            let workingMap = JSON.parse(JSON.stringify(schedules));
+            let latestPost = null;
+
+            for (const w of wraps) {
+              const txtEl = w.querySelector('.tgme_widget_message_text');
+              if (!txtEl) continue;
+              const txt = txtEl.textContent.trim();
+              const parsed = extractSchedulesFromText(txt, workingMap);
+              if (parsed) {
+                const postId = w.querySelector('.tgme_widget_message')?.getAttribute('data-post') || '';
+                const postKey = `tg_${postId}::${txt.replace(/\s+/g, ' ').slice(0, 140)}`;
+                if (parsed.type === 'schedule_update') workingMap = parsed.schedules;
+                latestPost = { parsed, postKey };
+              }
+            }
+
+            if (latestPost && latestPost.postKey !== lastProcessedPostKey) {
+              lastProcessedPostKey = latestPost.postKey;
+              try { localStorage.setItem('zp_svitlo_last_post_key', lastProcessedPostKey); } catch (e) {}
+
+              if (latestPost.parsed.type === 'emergency_on') {
+                emergencyMessage = {
+                  title: 'У Запоріжжі діють графіки аварійних відключень (ГАВ / СГАВ)',
+                  desc: sanitizeText(latestPost.parsed.text, 250),
+                  time: 'LIVE'
+                };
+                toggleEmergencyMode(true);
+              } else if (latestPost.parsed.type === 'emergency_off') {
+                toggleEmergencyMode(false);
+              } else if (latestPost.parsed.type === 'schedule_update') {
+                queue21HasExplicitOutage = Boolean(latestPost.parsed.explicitQueue21);
+                toggleEmergencyMode(false);
+                schedules = workingMap;
+                renderQueueButtons();
+                renderScheduleMatrix();
+                updateRealtimeTelemetry();
+              }
+              persistSchedulesLocally();
+              if (manual) showToast('⚡', 'Графік оновлено');
+            } else if (manual) {
+              showToast('⚡', 'Актуальний графік');
+            }
+          } else if (manual) {
+            showToast('⚡', 'Дані синхронізовано');
+          }
+        } catch (e) {
+          if (manual) showToast('⚠️', 'Перевірте підключення до мережі');
+        } finally {
+          isSyncInProgress = false;
+          setSyncSpinning(false);
+        }
+      }
+
+      // =========================================================================
+      // 8. ПРИВ'ЯЗКА ПОДІЙ ТА ЗАПУСК
+      // =========================================================================
+      document.getElementById('enterAppBtn').addEventListener('click', enterMonitoringApp);
+      document.getElementById('headerRefreshBtn').addEventListener('click', () => syncWithSources(true));
+      document.getElementById('openBroadcastBtn').addEventListener('click', () => openModal('broadcastModal'));
+      document.getElementById('closeBroadcastModalBtn').addEventListener('click', () => closeModal('broadcastModal'));
+      document.getElementById('broadcastModal').addEventListener('click', (e) => {
+        if (e.target === e.currentTarget) closeModal('broadcastModal');
+      });
+
+      document.getElementById('tabScheduleBtn').addEventListener('click', () => switchAdminTab('schedule'));
+      document.getElementById('tabTgBtn').addEventListener('click', () => switchAdminTab('tg'));
+      document.getElementById('tabAlertBtn').addEventListener('click', () => switchAdminTab('alert'));
+
+      document.getElementById('manualZoeTextInput').addEventListener('input', previewManualScheduleText);
+      document.getElementById('publishScheduleBtn').addEventListener('click', handlePublishManualSchedule);
+      document.getElementById('saveTgChannelBtn').addEventListener('click', handleSaveTgChannel);
+      document.getElementById('sendBroadcastBtn').addEventListener('click', handleSendBroadcast);
+      document.getElementById('clearBroadcastBtn').addEventListener('click', handleClearBroadcast);
+      document.getElementById('dismissPopupBtn').addEventListener('click', dismissBroadcastPopup);
+
+      document.getElementById('btnViewDetail').addEventListener('click', () => setMatrixView('detail'));
+      document.getElementById('btnViewAll').addEventListener('click', () => setMatrixView('all'));
+      document.getElementById('copyScheduleBtn').addEventListener('click', copyCurrentSchedule);
+
+      initSchedulesState();
+      renderQueueButtons();
+      renderScheduleMatrix();
+      updateRealtimeTelemetry();
+
+      initFirebaseRealtimeStreams();
+      pollFirebaseSnapshot();
+      setInterval(pollFirebaseSnapshot, 5000);
+      setInterval(() => syncWithSources(false), 60000);
+      setInterval(updateRealtimeTelemetry, 1000);
+    })();
   </script>
 </body>
 </html>
