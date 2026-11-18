@@ -1050,7 +1050,7 @@
       color: #71717a;
     }
 
-    /* 3. МОДАЛЬНІ ВІКНА З ПЛАВНОЮ АНІМАЦІЄЮ */
+    /* 3. МОДАЛЬНІ ВІКНА */
     .modal-backdrop {
       position: fixed;
       inset: 0;
@@ -1302,7 +1302,7 @@
 </head>
 <body class="splash-locked">
 
-  <!-- 1. СТАРТОВИЙ ЕКРАН (СВІТЛИЙ БІЛИЙ ФОН) -->
+  <!-- 1. СТАРТОВИЙ ЕКРАН -->
   <section id="splashScreen" aria-label="Стартовий екран ZP SVITLO">
     <div class="splash-top-bar">
       <span class="splash-live-pill">
@@ -1645,7 +1645,6 @@
         <button type="button" id="closeBroadcastModalBtn" class="modal-close">✕</button>
       </div>
 
-      <!-- Екран входу по паролю -->
       <div id="adminAuthGate" style="display: flex; flex-direction: column; gap: 10px;">
         <div style="background: #f4f4f6; border: 1px solid #e4e4e7; border-radius: 14px; padding: 12px; font-size: 12px; color: #3f3f46; line-height: 1.4;">
           Введіть секретний пароль адміністратора, щоб відкрити керування графіками, Telegram-каналом та розсилкою Ефіру.
@@ -1664,7 +1663,6 @@
         </button>
       </div>
 
-      <!-- Розблокований кабінет керування -->
       <div id="adminUnlockedPanel" class="hidden">
         <div style="display: flex; align-items: center; justify-content: space-between; background: #dcfce7; border: 1px solid #86efac; color: #14532d; border-radius: 12px; padding: 8px 12px; margin-bottom: 10px; font-family: var(--font-mono); font-size: 10.5px; font-weight: 700;">
           <span>🔓 СЕАНС АВТОРИЗОВАНО</span>
@@ -1689,7 +1687,7 @@
             <label class="font-mono" style="font-size: 10px; font-weight: 700; display: block; margin-bottom: 4px;">
               НОВИЙ ГРАФІК (ФОРМАТ 1.1: 00:00 – 04:30...):
             </label>
-            <textarea id="manualZoeTextInput" rows="6" class="field-textarea font-mono" placeholder="1.1: 00:00 – 04:30, 19:00 – 24:00&#10;1.2: 00:00 – 04:30, 22:00 – 24:00&#10;5.2: 04:00 – 09:00, 22:30 – 24:00"></textarea>
+            <textarea id="manualZoeTextInput" rows="7" class="field-textarea font-mono" placeholder="1.1: 00:00 – 04:30, 19:00 – 24:00&#10;1.2: 00:00 – 04:30, 22:00 – 24:00&#10;5.2: 04:00 – 09:00, 22:30 – 24:00"></textarea>
           </div>
 
           <div id="manualPreviewBox" class="hidden" style="background: #f4f4f6; border: 1px solid #e4e4e7; border-radius: 10px; padding: 8px 10px; font-family: var(--font-mono); font-size: 10px;"></div>
@@ -1782,12 +1780,13 @@
       'use strict';
 
       // =========================================================================
-      // 1. КОНФІГУРАЦІЯ ТА БЕЗПЕЧНА АВТОРИЗАЦІЯ
+      // 1. КОНФІГУРАЦІЯ ТА АКТУАЛЬНИЙ БАЗОВИЙ ГРАФІК
       // =========================================================================
       const FIREBASE_DB_URL = 'https://zpsvitlo-default-rtdb.europe-west1.firebasedatabase.app';
       const ADMIN_PASS_B64 = 'MjYyNjI2MTkuMTEuMjAyNg==';
       const DEFAULT_TG_URL = 'https://t.me/s/Zaporizhzhyaoblenergo_news';
       const ZOE_OUTAGE_URL = 'https://www.zoe.com.ua/outage/';
+      const CACHE_STORAGE_KEY = 'zp_svitlo_schedules_v6';
 
       const SUBQUEUES = Object.freeze([
         { id: '1.1', short: 'Черга 1 • підч. 1', label: 'м. Запоріжжя, Черга 1, підчерга 1', isJuridicalOnly: false },
@@ -1812,9 +1811,9 @@
         '2.1': ['17:30-22:30'],
         '2.2': ['00:00-01:30', '17:30-22:30'],
         '3.1': ['04:00-05:30', '18:00-23:00'],
-        '3.2': ['04:00-05:30', '15:30-18:30'],
+        '3.2': ['04:00-05:30', '17:30-18:30'],
         '4.1': ['08:30-13:30', '17:30-22:30'],
-        '4.2': ['00:00-00:30', '15:30-19:30', '23:30-24:00'],
+        '4.2': ['00:00-00:30', '17:30-19:30', '23:30-24:00'],
         '5.1': ['00:00-04:30', '08:30-13:30', '17:30-22:30'],
         '5.2': ['04:00-09:00', '22:30-24:00'],
         '6.1': ['00:00-04:30', '13:00-18:00', '22:00-24:00'],
@@ -1853,6 +1852,7 @@
       let lastConfigUpdatedAt = 0;
       let lastProcessedPostKey = '';
       let dismissedBroadcastId = '';
+      let localManualLockUntil = 0;
 
       try {
         lastProcessedPostKey = localStorage.getItem('zp_svitlo_last_post_key') || '';
@@ -2000,7 +2000,7 @@
       function initSchedulesState() {
         schedules = buildDefaultSchedules();
         try {
-          const cached = localStorage.getItem('zp_svitlo_schedules_v5');
+          const cached = localStorage.getItem(CACHE_STORAGE_KEY);
           if (cached) {
             const parsed = JSON.parse(cached);
             if (isSafeObject(parsed) && isSafeObject(parsed.schedules)) {
@@ -2027,7 +2027,7 @@
 
       function persistSchedulesLocally() {
         try {
-          localStorage.setItem('zp_svitlo_schedules_v5', JSON.stringify({
+          localStorage.setItem(CACHE_STORAGE_KEY, JSON.stringify({
             schedules,
             updatedAt: lastScheduleUpdatedAt
           }));
@@ -2041,7 +2041,7 @@
       }
 
       // =========================================================================
-      // 3. БЕЗПЕЧНИЙ РЕНДЕР DOM (100% CREATEELEMENT / TEXTCONTENT)
+      // 3. БЕЗПЕЧНИЙ РЕНДЕР DOM
       // =========================================================================
       function clearElement(el) {
         if (!el) return;
@@ -2115,6 +2115,13 @@
         }, 400);
       }
 
+      function formatCurrentSchedulesToText() {
+        return ALL_QUEUES.map(q => {
+          const intervals = formatIntervalsFromSlots(schedules[q] || []);
+          return `${q}: ${intervals.length ? intervals.join(', ') : 'без відключень'}`;
+        }).join('\n');
+      }
+
       function openBroadcastCabinet() {
         document.getElementById('firebaseFeedbackBox').classList.add('hidden');
         const pinEl = document.getElementById('broadcastPinInput');
@@ -2124,6 +2131,11 @@
         if (Boolean(verifiedSessionHash)) {
           document.getElementById('adminAuthGate').classList.add('hidden');
           document.getElementById('adminUnlockedPanel').classList.remove('hidden');
+          const manualInput = document.getElementById('manualZoeTextInput');
+          if (!manualInput.value.trim()) {
+            manualInput.value = formatCurrentSchedulesToText();
+            previewManualScheduleText();
+          }
         } else {
           pinEl.value = '';
           document.getElementById('adminAuthGate').classList.remove('hidden');
@@ -2143,6 +2155,11 @@
         document.getElementById('adminAuthGate').classList.add('hidden');
         document.getElementById('adminUnlockedPanel').classList.remove('hidden');
         document.getElementById('tgChannelUrlInput').value = activeTgChannelUrl;
+        const manualInput = document.getElementById('manualZoeTextInput');
+        if (!manualInput.value.trim()) {
+          manualInput.value = formatCurrentSchedulesToText();
+          previewManualScheduleText();
+        }
       }
 
       function handleLogoutCabinet() {
@@ -2588,7 +2605,7 @@
       }
 
       // =========================================================================
-      // 4. УСИЛЕННЫЙ ПАРСИНГ ГРАФІКІВ (БУДЬ-ЯКИЙ ФОРМАТ ТЕКСТУ ТА ПОСТІВ ТГ)
+      // 4. ПАРСИНГ ГРАФІКІВ (ТОЧНИЙ РОЗБІР БУДЬ-ЯКОГО ТЕКСТУ)
       // =========================================================================
       function toggleEmergencyMode(active) {
         isEmergencyActive = active;
@@ -2667,14 +2684,15 @@
         while ((match = qTokenRegex.exec(normalized)) !== null) {
           tokens.push({
             q: match[1],
-            index: match.index + match[0].length
+            tokenStart: match.index,
+            contentStart: match.index + match[0].length
           });
         }
 
         for (let i = 0; i < tokens.length; i++) {
           const cur = tokens[i];
-          const nextIdx = i + 1 < tokens.length ? tokens[i + 1].index - 3 : normalized.length;
-          const chunk = normalized.slice(cur.index, nextIdx);
+          const nextIdx = i + 1 < tokens.length ? tokens[i + 1].tokenStart : normalized.length;
+          const chunk = normalized.slice(cur.contentStart, nextIdx);
           const chunkLower = chunk.toLowerCase();
 
           const intervals = parseIntervalsFromString(chunk);
@@ -2783,6 +2801,7 @@
       }
 
       function applyRemoteScheduleObject(remote) {
+        if (Date.now() < localManualLockUntil) return false;
         if (!isSafeObject(remote)) return false;
 
         const nextMap = Object.create(null);
@@ -2922,6 +2941,7 @@
         try {
           const schedStream = new EventSource(`${FIREBASE_DB_URL}/schedule.json`);
           const onSched = (ev) => {
+            if (Date.now() < localManualLockUntil) return;
             try {
               const parsed = JSON.parse(ev.data);
               if (isSafeObject(parsed) && parsed.path === '/' && parsed.data) {
@@ -2939,6 +2959,7 @@
       }
 
       async function pollFirebaseSnapshot(notifyOnChange = false) {
+        if (Date.now() < localManualLockUntil) return false;
         try {
           const [schedRes, cfgRes, bcRes] = await Promise.all([
             fetch(`${FIREBASE_DB_URL}/schedule.json?_t=${Date.now()}`, { cache: 'no-store' }),
@@ -3005,6 +3026,8 @@
         }
 
         lastScheduleUpdatedAt = Date.now();
+        localManualLockUntil = Date.now() + 30000;
+
         if (parsed.type === 'emergency_on') {
           emergencyMessage = {
             title: 'У Запоріжжі діють графіки аварійних відключень (ГАВ / СГАВ)',
@@ -3016,7 +3039,11 @@
           toggleEmergencyMode(false);
         } else if (parsed.type === 'schedule_update') {
           queue21HasExplicitOutage = Boolean(parsed.explicitQueue21);
-          schedules = parsed.schedules;
+          const fresh = Object.create(null);
+          ALL_QUEUES.forEach(q => {
+            fresh[q] = [...parsed.schedules[q]];
+          });
+          schedules = fresh;
           toggleEmergencyMode(false);
         }
 
@@ -3028,11 +3055,10 @@
 
         const cloudRes = await pushScheduleToFirebase(verifiedSessionHash, 'manual_' + lastScheduleUpdatedAt);
         if (cloudRes.ok) {
-          showFeedbackBox(`✅ Графік оновлено (${parsed.updatedCount || 12} черг) і збережено!`, true);
-          document.getElementById('manualZoeTextInput').value = '';
-          document.getElementById('manualPreviewBox').classList.add('hidden');
+          showFeedbackBox(`✅ Графік оновлено (${parsed.updatedCount || 12} черг) і збережено в Firebase!`, true);
+          showToast('⚡', 'Новий графік застосовано!');
         } else {
-          showFeedbackBox(`✅ Графік оновлено на сайті! (Firebase: ${cloudRes.status || 'офлайн'})`, true);
+          showFeedbackBox(`⚠️ На сайті застосовано, але Firebase повернув HTTP ${cloudRes.status} (перевір Rules!)`, false);
         }
       }
 
