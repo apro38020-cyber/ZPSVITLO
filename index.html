@@ -1,4 +1,4 @@
-К<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="uk" class="splash-locked">
 <head>
   <meta charset="UTF-8" />
@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="ZP SVITLO" />
   <meta name="theme-color" content="#08080a" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; connect-src 'self' https://zpsvitlo-default-rtdb.europe-west1.firebasedatabase.app https://api.allorigins.win https://api.codetabs.com https://corsproxy.io https://thingproxy.freeboard.io; img-src 'self' data:; base-uri 'none'; form-action 'none';" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: data: 'unsafe-inline' 'unsafe-eval';" />
   <link rel="apple-touch-icon" sizes="180x180" href="icon.png" />
   <title>ZP SVITLO — м. Запоріжжя</title>
 
@@ -1498,10 +1498,10 @@
       'use strict';
 
       // =========================================================================
-      // 1. ЗАХИЩЕНА КОНФІГУРАЦІЯ ТА КРИПТОГРАФІЧНИЙ ЗАХИСТ ДОСТУПУ
+      // 1. ЗАХИЩЕНА КОНФІГУРАЦІЯ ТА КРИПТОГРАФІЧНИЙ ХЕШ ПАРОЛЯ
       // =========================================================================
       const FIREBASE_DB_URL = 'https://zpsvitlo-default-rtdb.europe-west1.firebasedatabase.app';
-      const EXPECTED_AUTH_HASH = '0c874986d60e8c3f1e5d3a3a8a8e31d657728c45650c740f734a13d3f8680c1f';
+      const EXPECTED_AUTH_HASH = 'b82b3d82065ba5c3d4949dc49b78e2d46e27bc8059732f915be5534c07d39ef2'; // Твій секретний код
       const DEFAULT_TG_URL = 'https://t.me/s/Zaporizhzhyaoblenergo_news';
 
       const SUBQUEUES = Object.freeze([
@@ -1521,7 +1521,6 @@
 
       const ALL_QUEUES = Object.freeze(SUBQUEUES.map(q => q.id));
 
-      // Вшитий актуальний графік за замовчуванням (0 = світло є, 1 = відключення)
       const ACTUAL_DEFAULT_RANGES = Object.freeze({
         '1.1': ['00:00-04:30', '19:00-24:00'],
         '1.2': ['00:00-04:30', '22:00-24:00'],
@@ -1566,13 +1565,11 @@
       let activeBroadcastData = null;
       let isSyncInProgress = false;
       let toastTimer = null;
-
-      // Анти-брутфорс захист для коду доступу
       let failedAuthAttempts = 0;
       let authLockoutUntil = 0;
 
       // =========================================================================
-      // 2. УТИЛІТИ БЕЗПЕКИ (SHA-256, САНІТИЗАЦІЯ, ЧАС KYIV)
+      // 2. УТИЛІТИ БЕЗПЕКИ ТА ЧАСУ
       // =========================================================================
       async function sha256Hex(plain) {
         const enc = new TextEncoder().encode(String(plain));
@@ -1589,7 +1586,7 @@
           return { ok: false, reason: `Забагато спроб. Зачекайте ${secLeft} сек.` };
         }
         const trimmed = String(inputCode || '').trim();
-        if (!trimmed || trimmed.length > 32) {
+        if (!trimmed || trimmed.length > 64) {
           return { ok: false, reason: 'Невірний код доступу' };
         }
         const hash = await sha256Hex(trimmed);
@@ -1602,7 +1599,7 @@
         if (failedAuthAttempts >= 5) {
           authLockoutUntil = Date.now() + 120000;
           failedAuthAttempts = 0;
-          return { ok: false, reason: 'Доступ тимчасово заблоковано на 2 хвилини' };
+          return { ok: false, reason: 'Доступ заблоковано на 2 хвилини' };
         }
         return { ok: false, reason: 'Невірний код доступу' };
       }
@@ -1733,7 +1730,7 @@
       }
 
       // =========================================================================
-      // 3. БЕЗПЕЧНИЙ РЕНДЕР DOM (100% CREATEELEMENT / TEXTCONTENT, БЕЗ INNERHTML)
+      // 3. БЕЗПЕЧНИЙ РЕНДЕР DOM (100% CREATEELEMENT, БЕЗ INNERHTML)
       // =========================================================================
       function clearElement(el) {
         if (!el) return;
@@ -1933,7 +1930,6 @@
         document.getElementById('statHoursOn').textContent = isSelectedJur ? 'Юр. особи' : isEmergencyActive ? '—' : fmtH(onHours);
         document.getElementById('statHoursOff').textContent = isSelectedJur ? fmtH(offHours) : isEmergencyActive ? 'ГАВ' : fmtH(offHours);
 
-        // 1. Основна сітка 8x3
         const detailContainer = document.getElementById('detailMatrixContainer');
         if (detailContainer) {
           clearElement(detailContainer);
@@ -2004,7 +2000,6 @@
           }
         }
 
-        // 2. Зведена таблиця усіх 12 підчерг
         const headRow = document.getElementById('matrixHoursHeaderRow');
         if (headRow && headRow.childElementCount === 0) {
           const stickyTh = createEl('th', 'matrix-sticky-col', 'Черга');
@@ -2201,7 +2196,7 @@
       }
 
       // =========================================================================
-      // 4. ПАРСИНГ ГРАФІКІВ (ТЕКСТ ТА HTML-ТАБЛИЦІ)
+      // 4. ПАРСИНГ ТЕКСТУ ГРАФІКІВ
       // =========================================================================
       function toggleEmergencyMode(active) {
         isEmergencyActive = active;
@@ -2344,68 +2339,8 @@
         return null;
       }
 
-      function extractSchedulesFromHtmlDocument(doc, baseMap = schedules) {
-        if (!doc) return null;
-        const tableQueues = Object.create(null);
-        let foundTables = 0;
-
-        const tables = [...doc.querySelectorAll('table')];
-        for (const tbl of tables) {
-          const rows = [...tbl.querySelectorAll('tr')];
-          for (const tr of rows) {
-            const cells = [...tr.querySelectorAll('th, td')].map(c => c.textContent.trim());
-            if (cells.length < 2) continue;
-            const rowText = cells.join(' ');
-            const qMatches = [...rowText.matchAll(/(?:^|[^\d.])([1-6]\.[1-2])(?![\d.])/g)];
-            if (qMatches.length > 0) {
-              const intervals = parseIntervalsFromString(rowText);
-              if (intervals.length > 0) {
-                qMatches.forEach(qm => {
-                  const q = qm[1];
-                  const qSlots = new Array(48).fill(0);
-                  intervals.forEach(([s, e]) => {
-                    for (let i = s; i < e && i < 48; i++) qSlots[i] = 1;
-                  });
-                  tableQueues[q] = qSlots;
-                  foundTables++;
-                });
-              } else if (/не\s*задія|без\s*відключень|скасовано/i.test(rowText)) {
-                qMatches.forEach(qm => {
-                  tableQueues[qm[1]] = new Array(48).fill(0);
-                  foundTables++;
-                });
-              }
-            }
-          }
-        }
-
-        const contentRoot = doc.querySelector('.entry-content, article, main') || doc.body;
-        const rawText = contentRoot ? contentRoot.textContent : '';
-        const textParsed = extractSchedulesFromText(rawText, baseMap);
-
-        if (foundTables > 0) {
-          const merged = Object.create(null);
-          ALL_QUEUES.forEach(q => {
-            if (tableQueues[q]) merged[q] = tableQueues[q];
-            else if (textParsed && textParsed.schedules && textParsed.schedules[q]) merged[q] = textParsed.schedules[q];
-            else if (Array.isArray(baseMap[q])) merged[q] = [...baseMap[q]];
-            else merged[q] = new Array(48).fill(0);
-          });
-          const explicit21 = Boolean(tableQueues['2.1'] && tableQueues['2.1'].some(v => v === 1));
-          return {
-            type: 'schedule_update',
-            schedules: merged,
-            updatedCount: foundTables,
-            explicitQueue21: explicit21,
-            text: rawText
-          };
-        }
-
-        return textParsed;
-      }
-
       // =========================================================================
-      // 5. ХМАРНА СИНХРОНІЗАЦІЯ FIREBASE (З ВАЛІДАЦІЄЮ ТА ЗАХИСТОМ ЗАПИСУ)
+      // 5. ХМАРНА СИНХРОНІЗАЦІЯ FIREBASE
       // =========================================================================
       async function pushScheduleToFirebase(authHash, postKey = '') {
         try {
@@ -2663,7 +2598,7 @@
           document.getElementById('manualZoeTextInput').value = '';
           document.getElementById('manualPreviewBox').classList.add('hidden');
         } else if (cloudRes.status === 401 || cloudRes.status === 403) {
-          showFeedbackBox('❌ Помилка доступу Firebase (401): перевірте Firebase Rules', false);
+          showFeedbackBox('❌ Помилка доступу Firebase (401): перевірте правила Rules', false);
         } else {
           showFeedbackBox('⚠️ Графік застосовано локально (помилка мережі Firebase)', false);
         }
@@ -2790,7 +2725,7 @@
       }
 
       // =========================================================================
-      // 7. ФОНОВИЙ АВТОПАРСЕР (БЕЗ ВИВОДУ ПЛАШОК ДЖЕРЕЛ В ІНТЕРФЕЙС)
+      // 7. ФОНОВИЙ АВТОПАРСЕР TELEGRAM
       // =========================================================================
       async function fetchUrlFastRace(targetUrl) {
         const busted = `${targetUrl}${targetUrl.includes('?') ? '&' : '?'}_t=${Date.now()}`;
@@ -2891,7 +2826,7 @@
             showToast('⚡', 'Дані синхронізовано');
           }
         } catch (e) {
-          if (manual) showToast('⚠️', 'Перевірте підключення до мережі');
+          if (manual) showToast('⚠️', 'Перевірте мережу');
         } finally {
           isSyncInProgress = false;
           setSyncSpinning(false);
@@ -2899,7 +2834,7 @@
       }
 
       // =========================================================================
-      // 8. ПРИВ'ЯЗКА ПОДІЙ ТА ЗАПУСК
+      // 8. ІНІЦІАЛІЗАЦІЯ І ЗАПУСК
       // =========================================================================
       document.getElementById('enterAppBtn').addEventListener('click', enterMonitoringApp);
       document.getElementById('headerRefreshBtn').addEventListener('click', () => syncWithSources(true));
@@ -2918,6 +2853,7 @@
       document.getElementById('saveTgChannelBtn').addEventListener('click', handleSaveTgChannel);
       document.getElementById('sendBroadcastBtn').addEventListener('click', handleSendBroadcast);
       document.getElementById('clearBroadcastBtn').addEventListener('click', handleClearBroadcast);
+      document.getElementById('dismissPopupBtn').dismissBroadcastPopup = dismissBroadcastPopup;
       document.getElementById('dismissPopupBtn').addEventListener('click', dismissBroadcastPopup);
 
       document.getElementById('btnViewDetail').addEventListener('click', () => setMatrixView('detail'));
