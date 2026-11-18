@@ -36,13 +36,30 @@
       width: 100%;
       max-width: 100%;
       overflow-x: hidden;
-      touch-action: manipulation;
-      overscroll-behavior-y: none;
+      overflow-y: auto !important;
+      height: auto !important;
+      min-height: 100dvh;
+      touch-action: pan-y;
+      -webkit-overflow-scrolling: touch;
       -webkit-text-size-adjust: 100%;
       font-family: var(--font-sans);
       background-color: var(--bg-black);
       color: var(--text-dark);
       -webkit-font-smoothing: antialiased;
+    }
+
+    html.splash-locked,
+    body.splash-locked {
+      overflow: hidden !important;
+      height: 100dvh !important;
+      max-height: 100dvh !important;
+    }
+
+    #mainApp {
+      width: 100%;
+      min-height: 100dvh;
+      overflow: visible;
+      touch-action: pan-y;
     }
 
     input, textarea, select {
@@ -1316,12 +1333,12 @@
     }
   </style>
 </head>
-<body>
+<body class="splash-locked">
 
   <!-- =====================================================================
        1. СТАРТОВИЙ ЕКРАН (ФІКСОВАНИЙ HUD 100dvh БЕЗ ПРОКРУТКИ)
        ===================================================================== -->
-  <section id="entry-screen" class="entry-screen">
+  <section id="splashScreen" class="entry-screen">
     <div class="entry-top">
       <div class="hud-pill">
         <span class="ios-sticker" style="font-size: 13px;">⚡</span>
@@ -1867,27 +1884,36 @@
     // =========================================================================
     // 2. ПЕРЕХІД ЗІ СТАРТОВОГО ЕКРАНА ТА УТИЛІТИ ІНТЕРФЕЙСУ
     // =========================================================================
+    document.documentElement.classList.add('splash-locked');
+    document.body.classList.add('splash-locked');
+
     window.enterApp = function () {
-      const entry = document.getElementById('entry-screen');
+      const entry = document.getElementById('splashScreen');
       const mainApp = document.getElementById('mainApp');
+      document.documentElement.classList.remove('splash-locked');
+      document.body.classList.remove('splash-locked');
       if (mainApp) mainApp.classList.remove('hidden');
       if (entry) {
         entry.classList.add('closing');
         setTimeout(() => {
           entry.classList.add('hidden');
+          entry.style.display = 'none';
           triggerScanEffect();
-        }, 220);
+        }, 200);
       }
-      window.scrollTo(0, 0);
+      window.scrollTo({ top: 0, behavior: 'instant' });
     };
 
     window.showEntryScreen = function () {
-      const entry = document.getElementById('entry-screen');
+      const entry = document.getElementById('splashScreen');
       const mainApp = document.getElementById('mainApp');
       if (mainApp) mainApp.classList.add('hidden');
       if (entry) {
+        entry.style.display = '';
         entry.classList.remove('hidden', 'closing');
       }
+      document.documentElement.classList.add('splash-locked');
+      document.body.classList.add('splash-locked');
     };
 
     window.openModal = function (id) {
